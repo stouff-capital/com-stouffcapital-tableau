@@ -4,6 +4,10 @@ metadata:
   name: ingress-tableau
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/proxy-body-size: "15m"
+    nginx.org/proxy-connect-timeout: "300s"
+    nginx.org/proxy-read-timeout: "60s"
+    nginx.org/client-max-body-size: "15m"
 spec:
   backend:
     serviceName: default-http-backend
