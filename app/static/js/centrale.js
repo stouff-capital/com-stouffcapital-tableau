@@ -104,6 +104,18 @@
       id: "models__RSST__scoring__final_score",
       alias: "RSST",
       dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__RV__scoring__final_score",
+      alias: "RV",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__EQ__scoring__final_score",
+      alias: "EQ",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__SALES__scoring__final_score",
+      alias: "SALES",
+      dataType: tableau.dataTypeEnum.int
     }];
 
     var tableSchema = {
@@ -152,6 +164,12 @@
           "models__MF__scoring__final_score": data[i]["models.MF.scoring.final_score"],
 
           "models__RSST__scoring__final_score": data[i]["models.RSST.scoring.final_score"],
+
+          "models__RV__scoring__final_score": data[i]["models.RV.scoring.final_score"],
+
+          "models__EQ__scoring__final_score": data[i]["models.EQ.scoring.final_score"],
+
+          "models__SALES__scoring__final_score": data[i]["models.SALES.scoring.final_score"],
           //models.RSST.scoring.final_score
         });
       }
