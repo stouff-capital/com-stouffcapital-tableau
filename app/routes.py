@@ -2,6 +2,8 @@ from app import app
 from flask import jsonify, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
+from config import Config
+
 import os
 
 import pandas as pd
@@ -15,14 +17,18 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-
 @app.route('/')
-@app.route('/index')
-def index():
+@app.route('/last')
+def centrale_last():
     if os.path.isfile( UPLOAD_FOLDER + FILENAME ):
-        return render_template("base.html")
+        return render_template("last.html")
     else:
         return render_template("upload.html")
+
+
+@app.route('/histo')
+def centrale_histo():
+    return render_template("histo.html")
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -44,7 +50,7 @@ def upload():
             file.save( os.path.join(UPLOAD_FOLDER, FILENAME ))
             app.logger.info('save as: ' + FILENAME )
 
-            return render_template("base.html")
+            return render_template("last.html")
 
         else:
             app.logger.warning('wrong extension')
@@ -55,6 +61,25 @@ def upload():
 def tableau_data_centrale():
 
     df = pd.read_csv( UPLOAD_FOLDER + FILENAME, sep=";" )
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+    return jsonify( df[0:5].to_dict(orient='records') )
+
+
+@app.route('/tableau/data/centrale/histo')
+def tableau_data_centrale_histo():
+
+    from sqlalchemy import create_engine
+    engine = create_engine('postgresql://postgres:' + Config.POSTGRES_PASSWORD + '@' +  Config.POSTGRES_HOST + ':' + Config.POSTGRES_PORT + '/centralhisto')
+
+    # df = pd.read_sql_query("SELECT time_bucket('30 days', dateeval) as one_month, avg(rank) FROM ranks WHERE ticker='AAPL US EQUITY' GROUP BY one_month;", con=engine)
+    df = pd.read_sql_query("SELECT * FROM ranks WHERE dateeval>='2017-01-01' ORDER BY dateeval DESC, Ticker ASC;", con=engine)
+
+    # transforme datetime.date into str
+    df['dateeval'] = pd.to_datetime(df['dateeval']).dt.strftime('%Y-%m-%d')
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)

@@ -1,2 +1,7 @@
 flask
+Flask-SQLAlchemy
+gunicorn
+numpy
 pandas
+psycopg2
+python-dotenv
