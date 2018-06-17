@@ -116,6 +116,10 @@
       id: "models__SALES__scoring__final_score",
       alias: "SALES",
       dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__SMARTSENT__scoring__final_score",
+      alias: "SMARTSENT",
+      dataType: tableau.dataTypeEnum.int
     }];
 
     var tableSchema = {
@@ -170,7 +174,8 @@
           "models__EQ__scoring__final_score": data[i]["models.EQ.scoring.final_score"],
 
           "models__SALES__scoring__final_score": data[i]["models.SALES.scoring.final_score"],
-          //models.RSST.scoring.final_score
+
+          "models__SMARTSENT__scoring__final_score": data[i]["models.SMARTSENT.scoring.final_score"],
         });
       }
 

@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-tableau
+  annotations:
+    kubernetes.io/tls-acme: "true" # enable certificates
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/proxy-body-size: "15m"
+    nginx.org/proxy-connect-timeout: "300s"
+    nginx.org/proxy-read-timeout: "60s"
+    nginx.org/client-max-body-size: "15m"
+spec:
+  tls:
+  - hosts:
+    - tableau.stouffcapital.com
+    secretName: tableau-stouffcapital-service-tls
+  backend:
+    serviceName: default-http-backend
+    servicePort: 80
+  rules:
+  - host: tableau.stouffcapital.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: com-stouffcapital-tableau
+          servicePort: 5000
+
