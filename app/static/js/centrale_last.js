@@ -9,6 +9,10 @@
       alias: "Ticker",
       dataType: tableau.dataTypeEnum.string
     }, {
+      id: "data__datestamp",
+      alias: "DATESTAMP",
+      dataType: tableau.dataTypeEnum.date
+    }, {
       id: "asset__NAME",
       alias: "NAME",
       dataType: tableau.dataTypeEnum.string
@@ -142,6 +146,7 @@
 
         tableData.push({
           "ticker__given": data[i]["ticker.given"],
+          "data__datestamp": data[i]["_index"].replace(/\./g, "-").replace('central-', ''),
           "asset__NAME": data[i]["asset.NAME"],
           "asset__ID_ISIN": data[i]["asset.ID_ISIN"],
           "asset__CRNCY": data[i]["asset.CRNCY"],
