@@ -1,4 +1,5 @@
 flask
+Flask-BasicAuth
 Flask-SQLAlchemy
 gunicorn
 numpy

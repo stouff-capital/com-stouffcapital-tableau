@@ -136,56 +136,41 @@
   };
 
   // Download the data
+  function make_base_auth(user, password) {
+    var tok = user + ':' + password;
+    var hash = btoa(tok);
+    return "Basic " + hash;
+  }
   myConnector.getData = function(table, doneCallback) {
-    $.getJSON("tableau/data/centrale", function(data) {
+    $.ajax({
+      type: 'GET',
+      url: '/tableau/data/ib/fx/expo',
+      dataType: 'json',
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', make_base_auth( tableau.username, tableau.password ));
+      },
+      success: function(data) {
+        tableData = [];
 
-      tableData = [];
+        // Iterate over the JSON object
+        for (var i = 0, len = data.length; i < len; i++) {
 
-      // Iterate over the JSON object
-      for (var i = 0, len = data.length; i < len; i++) {
+          var company = {
+            "data__datestamp": data[i]["_index"].replace(/\./g, "-").replace('central-', '')
+          };
 
-        tableData.push({
-          "ticker__given": data[i]["ticker.given"],
-          "data__datestamp": data[i]["_index"].replace(/\./g, "-").replace('central-', ''),
-          "asset__NAME": data[i]["asset.NAME"],
-          "asset__ID_ISIN": data[i]["asset.ID_ISIN"],
-          "asset__CRNCY": data[i]["asset.CRNCY"],
-          "asset__GICS_SECTOR_NAME": data[i]["asset.GICS_SECTOR_NAME"],
-          "asset__GICS_INDUSTRY_GROUP_NAME": data[i]["asset.GICS_INDUSTRY_GROUP_NAME"],
-          "asset__GICS_INDUSTRY_NAME": data[i]["asset.GICS_INDUSTRY_NAME"],
-          "asset__COUNTRY_ISO__ISOALPHA2Code": data[i]["asset.COUNTRY_ISO.ISOALPHA2Code"],
-          "asset__COUNTRY_ISO__name": data[i]["asset.COUNTRY_ISO.name"],
-          "asset__region__MatrixRegion": data[i]["asset.region.MatrixRegion"],
-          "derived__data__capiBaseCrncy__baseValueInBln": data[i]["derived.data.capiBaseCrncy.baseValueInBln"],
-          "raw__sources__bbg__data__VOLATILITY_90D": data[i]["raw.sources.bbg.data.VOLATILITY_90D"],
-          "raw__sources__bbg__data__CHG_PCT_1YR": data[i]["raw.sources.bbg.data.CHG_PCT_1YR"],
-          "models__GROWTH__CURRENT_EPSMthChg": data[i]["models.GROWTH.components.CURRENT_EPSMthChg.intermediary_score"],
-          "models__GROWTH__PAST_EPSStability": data[i]["models.GROWTH.components.PAST_EPSStability.intermediary_score"],
-          "models__GROWTH__CURRENT_BEstEPS4WeekChangeNextYear": data[i]["models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.intermediary_score"],
-          "models__GROWTH__PAST_EPSGrowthYr": data[i]["models.GROWTH.components.PAST_EPSGrowthYr.intermediary_score"],
-          "models__GROWTH__CURRENT_BEstEPS4WeekChangeCurrentYear": data[i]["models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.intermediary_score"],
-          "models__GROWTH__NEXT_EPSGrowth": data[i]["models.GROWTH.components.NEXT_EPSGrowth.intermediary_score"],
-          "models__GROWTH__CURRENT_RatioEPSCurrentYearLastEPS": data[i]["models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.intermediary_score"],
-          "models__GROWTH__CURRENT_EPSSurprise": data[i]["models.GROWTH.components.CURRENT_EPSSurprise.intermediary_score"],
-          "models__GROWTH__CURRENT_RatioEPSNextYrCurrentYr": data[i]["models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.intermediary_score"],
-          "models__GROWTH__scoring__final_score": data[i]["models.GROWTH.scoring.final_score"],
+          var companyFields = ["ticker.given", "asset.NAME", "asset.ID_ISIN", "asset.CRNCY", "asset.GICS_SECTOR_NAME", "asset.GICS_INDUSTRY_GROUP_NAME", "asset.GICS_INDUSTRY_NAME", "asset.COUNTRY_ISO.ISOALPHA2Code", "asset.COUNTRY_ISO.name", "asset.region.MatrixRegion", "derived.data.capiBaseCrncy.baseValueInBln", "raw.sources.bbg.data.VOLATILITY_90D", "raw.sources.bbg.data.CHG_PCT_1YR", "models.GROWTH.components.CURRENT_EPSMthChg.intermediary_score", "models.GROWTH.components.PAST_EPSStability.intermediary_score", "models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.intermediary_score", "models.GROWTH.components.PAST_EPSGrowthYr.intermediary_score", "models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.intermediary_score", "models.GROWTH.components.NEXT_EPSGrowth.intermediary_score", "models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.intermediary_score", "models.GROWTH.components.CURRENT_EPSSurprise.intermediary_score", "models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.intermediary_score", "models.GROWTH.scoring.final_score", "models.MF.scoring.final_score", "models.RSST.scoring.final_score", "models.RV.scoring.final_score", "models.EQ.scoring.final_score", "models.SALES.scoring.final_score", "models.SMARTSENT.scoring.final_score"];
 
-          "models__MF__scoring__final_score": data[i]["models.MF.scoring.final_score"],
+          for (var f=0, flen = companyFields.length; f < flen; f++ ) {
+            company[ companyFields[f].replace("models.GROWTH.components.", "models.GROWTH.").replace(".intermediary_score", "").replace(/\./g, "__") ] = data [i] [ companyFields[f] ]
+          }
 
-          "models__RSST__scoring__final_score": data[i]["models.RSST.scoring.final_score"],
+          tableData.push(company);
+        }
 
-          "models__RV__scoring__final_score": data[i]["models.RV.scoring.final_score"],
-
-          "models__EQ__scoring__final_score": data[i]["models.EQ.scoring.final_score"],
-
-          "models__SALES__scoring__final_score": data[i]["models.SALES.scoring.final_score"],
-
-          "models__SMARTSENT__scoring__final_score": data[i]["models.SMARTSENT.scoring.final_score"],
-        });
+        table.appendRows(tableData);
+        doneCallback();
       }
-
-      table.appendRows(tableData);
-      doneCallback();
     });
   };
 
@@ -193,9 +178,13 @@
 
   // Create event listeners for when the user submits the form
   $(document).ready(function() {
-    //$("#submitButton").click(function() {
+    $("#submitButton").click(function() {
       tableau.connectionName = "Centrale Feed"; // This will be the data source name in Tableau
+
+      tableau.username = $("input#username").val();
+      tableau.password = $("input#password").val();
+
       tableau.submit(); // This sends the connector object to Tableau
-    //});
+    });
   });
 })();

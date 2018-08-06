@@ -12,6 +12,11 @@ ALLOWED_EXTENSIONS = set(['csv'])
 UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/static/data/'
 FILENAME = 'tableau.csv'
 
+from flask_basicauth import BasicAuth
+app.config['BASIC_AUTH_USERNAME'] = Config.BASIC_AUTH_USERNAME
+app.config['BASIC_AUTH_PASSWORD'] = Config.BASIC_AUTH_PASSWORD
+basic_auth = BasicAuth(app)
+
 # utilities
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -22,6 +27,14 @@ def allowed_file(filename):
 def centrale_last():
     if os.path.isfile( UPLOAD_FOLDER + FILENAME ):
         return render_template("last.html")
+    else:
+        return render_template("upload.html")
+
+
+@app.route('/fx/expo')
+def ib_fx_expo():
+    if os.path.isfile( UPLOAD_FOLDER + FILENAME ):
+        return render_template("ib_crncy_expo.html")
     else:
         return render_template("upload.html")
 
@@ -59,6 +72,19 @@ def upload():
 
 @app.route('/tableau/data/centrale')
 def tableau_data_centrale():
+
+    df = pd.read_csv( UPLOAD_FOLDER + FILENAME, sep=";" )
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+    return jsonify( df[0:5].to_dict(orient='records') )
+
+
+@app.route('/tableau/data/ib/fx/expo')
+@basic_auth.required
+def tableau_data_ib_fx_expo():
 
     df = pd.read_csv( UPLOAD_FOLDER + FILENAME, sep=";" )
 

@@ -36,5 +36,15 @@ spec:
             secretKeyRef:
               name: timescaledb
               key: postgres-password
+        - name: BASIC_AUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: ib
+              key: backend-user
+        - name: BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ib
+              key: backend-password
         ports:
         - containerPort: 5000
