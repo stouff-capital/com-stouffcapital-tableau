@@ -8,6 +8,11 @@ import os
 
 import pandas as pd
 
+import requests
+from requests.auth import HTTPBasicAuth
+
+AUTH=HTTPBasicAuth(Config.BASIC_AUTH_USERNAME, Config.BASIC_AUTH_PASSWORD )
+
 ALLOWED_EXTENSIONS = set(['csv'])
 UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/static/data/'
 FILENAME = 'tableau.csv'
@@ -31,10 +36,18 @@ def centrale_last():
         return render_template("upload.html")
 
 
-@app.route('/fx/expo')
-def ib_fx_expo():
+@app.route('/ib/eod/transactions')
+def ib_eod_transactions():
     if os.path.isfile( UPLOAD_FOLDER + FILENAME ):
-        return render_template("ib_crncy_expo.html")
+        return render_template("ib_eod_transactions.html")
+    else:
+        return render_template("upload.html")
+
+
+@app.route('/ib/eod/positions')
+def ib_eod_positions():
+    if os.path.isfile( UPLOAD_FOLDER + FILENAME ):
+        return render_template("ib_eod_positions.html")
     else:
         return render_template("upload.html")
 
@@ -82,11 +95,26 @@ def tableau_data_centrale():
     return jsonify( df[0:5].to_dict(orient='records') )
 
 
-@app.route('/tableau/data/ib/fx/expo')
+@app.route('/tableau/data/ib/eod/transactions')
 @basic_auth.required
-def tableau_data_ib_fx_expo():
+def tableau_data_ib_transactions():
 
-    df = pd.read_csv( UPLOAD_FOLDER + FILENAME, sep=";" )
+    res = requests.get('http://localhost:5000/reports/ib/eod/transactions', auth=AUTH)
+    df = pd.read_json(res.content, orient='records' )
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+    return jsonify( df[0:5].to_dict(orient='records') )
+
+
+@app.route('/tableau/data/ib/eod/positions')
+@basic_auth.required
+def tableau_data_ib_positions():
+
+    res = requests.get('http://localhost:5000/reports/ib/eod/positions', auth=AUTH)
+    df = pd.read_json(res.content, orient='records' )
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
