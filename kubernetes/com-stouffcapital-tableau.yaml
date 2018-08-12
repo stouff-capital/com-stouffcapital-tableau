@@ -46,5 +46,7 @@ spec:
             secretKeyRef:
               name: ib
               key: backend-password
+        - name: IB_HOST
+          value: https://ib.stouffcapital.com
         ports:
         - containerPort: 5000
