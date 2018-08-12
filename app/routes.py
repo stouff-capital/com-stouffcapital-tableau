@@ -99,7 +99,7 @@ def tableau_data_centrale():
 @basic_auth.required
 def tableau_data_ib_transactions():
 
-    res = requests.get('http://localhost:5000/reports/ib/eod/transactions', auth=AUTH)
+    res = requests.get(Config.IB_HOST + '/reports/ib/eod/transactions', auth=AUTH)
     df = pd.read_json(res.content, orient='records' )
 
     #patch missing values
@@ -113,7 +113,7 @@ def tableau_data_ib_transactions():
 @basic_auth.required
 def tableau_data_ib_positions():
 
-    res = requests.get('http://localhost:5000/reports/ib/eod/positions', auth=AUTH)
+    res = requests.get(Config.IB_HOST + '/reports/ib/eod/positions', auth=AUTH)
     df = pd.read_json(res.content, orient='records' )
 
     #patch missing values
