@@ -38,11 +38,15 @@
       dataType: tableau.dataTypeEnum.float
     }, {
       id: "ib_positionValueLocal",
-      alias: "IB postion value local currency",
+      alias: "IB position value local currency",
       dataType: tableau.dataTypeEnum.float
     }, {
       id: "ib_positionValueBase",
-      alias: "IB postion value base currency",
+      alias: "IB position value base currency",
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: "xls_ExposureBase",
+      alias: "XLS position exposure base currency",
       dataType: tableau.dataTypeEnum.float
     }];
 
@@ -79,7 +83,7 @@
 
           };
 
-          var positionMapping = [ ["Catégorie d'actifs", "ib_assetType"], ["Symbole", "ib_assetSymbole"], ["Description", "ib_assetDescription"], ["Devise", "ib_assetCurrency"], ["Expiration", "ib_assetExpiry"], ["Multiplicateur", "ib_assetMultiplier"], ["Quantité", "ib_positionQuantity"], ["Prix de Fermeture", "ib_positionPrice"], ["Valeur", "ib_positionValueLocal"], ["valeurBase", "ib_positionValueBase"] ];
+          var positionMapping = [ ["Catégorie d'actifs", "ib_assetType"], ["Symbole", "ib_assetSymbole"], ["Description", "ib_assetDescription"], ["Devise", "ib_assetCurrency"], ["Expiration", "ib_assetExpiry"], ["Multiplicateur", "ib_assetMultiplier"], ["Quantité", "ib_positionQuantity"], ["Prix de Fermeture", "ib_positionPrice"], ["Valeur", "ib_positionValueLocal"], ["valeurBase", "ib_positionValueBase"], ["position_exposureNetBase", "xls_ExposureBase"] ];
 
           for (var f=0, flen = positionMapping.length; f < flen; f++ ) {
             position[positionMapping[f][1]] = data [i] [ positionMapping[f][0] ]
