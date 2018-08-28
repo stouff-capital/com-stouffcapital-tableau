@@ -48,5 +48,15 @@ spec:
               key: backend-password
         - name: IB_HOST
           value: https://ib.stouffcapital.com
+        - name: GITHUB_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: tableau
+              key: github-client-id
+        - name: GITHUB_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tableau
+              key: github-client-secret
         ports:
         - containerPort: 5000

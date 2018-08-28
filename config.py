@@ -12,3 +12,5 @@ class Config(object):
     BASIC_AUTH_USERNAME = os.getenv('BASIC_AUTH_USERNAME')
     BASIC_AUTH_PASSWORD = os.getenv('BASIC_AUTH_PASSWORD')
     IB_HOST = os.getenv('IB_HOST') or "http://localhost:5000"
+    GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
+    GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')

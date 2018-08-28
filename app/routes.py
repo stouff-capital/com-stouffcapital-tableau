@@ -1,5 +1,5 @@
 from app import app
-from flask import jsonify, render_template, request, url_for
+from flask import jsonify, make_response, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
 from config import Config
@@ -26,18 +26,66 @@ app.config['BASIC_AUTH_USERNAME'] = Config.BASIC_AUTH_USERNAME
 app.config['BASIC_AUTH_PASSWORD'] = Config.BASIC_AUTH_PASSWORD
 basic_auth = BasicAuth(app)
 
+from flask_dance.contrib.github import make_github_blueprint, github
+app.secret_key = "supersekrit"
+blueprint = make_github_blueprint(
+    client_id=Config.GITHUB_CLIENT_ID,
+    client_secret=Config.GITHUB_CLIENT_SECRET,
+)
+app.register_blueprint(blueprint, url_prefix="/login")
+
+
+
 # utilities
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 @app.route('/')
 @app.route('/last')
-def centrale_last():
+def centrale_entry():
+
     if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
         return render_template("last.html")
     else:
         return render_template("upload.html")
+
+
+@app.route('/oauth')
+def centrale_last_oauth():
+    if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
+        if not github.authorized:
+            print( "centrale_entry:: ask for login" )
+            return redirect(url_for("github.login"))
+        else:
+            resp = redirect(url_for('centrale_last', token=github.token['access_token']))
+            resp.set_cookie(key='accessToken', value=github.token['access_token'])
+            return resp
+    else:
+        return render_template("upload.html")
+
+@app.route('/last/<token>')
+def centrale_last(token):
+    if github.authorized:
+        return render_template("oauth.html")
+    else:
+        resp = requests.get('https://api.github.com/user', headers={'Authorization': 'token ' + token})
+        print( resp.content )
+
+        dict_resp = json.loads(resp.content)
+        if 'message' not in dict_resp and 'login' in dict_resp:
+
+            #resp = requests.get('https://api.github.com/orgs/stouff-capital/members' , headers={'Authorization': 'token ' + token})
+            #list_members = json.loads( resp.content )
+
+            # check memberships /orgs/:org/members/:username
+            resp = requests.get('https://api.github.com/orgs/stouff-capital/members/' + dict_resp['login'] , headers={'Authorization': 'token ' + token})
+
+            if resp.status_code == 204:
+                return render_template("oauth.html")
+            else:
+                return redirect(url_for("github.login"))
+        else:
+            return redirect(url_for("github.login"))
 
 
 @app.route('/ib/eod/transactions')
