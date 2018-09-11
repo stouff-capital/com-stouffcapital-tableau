@@ -61,6 +61,14 @@
       alias: "CHG_PCT_1YR",
       dataType: tableau.dataTypeEnum.float
     }, {
+      id: "raw__sources__bbg__data__REL_1M",
+      alias: "REL_1M",
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: "raw__sources__bbg__data__REL_3M",
+      alias: "REL_3M",
+      dataType: tableau.dataTypeEnum.float
+    }, {
       id: "models__GROWTH__CURRENT_EPSMthChg",
       alias: "GROWTH__CURRENT_EPSMthChg",
       dataType: tableau.dataTypeEnum.int
@@ -124,6 +132,34 @@
       id: "models__SMARTSENT__scoring__final_score",
       alias: "SMARTSENT",
       dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__GROWTH__scoring__chg__1m",
+      alias: "GROWTH chg 1m",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__MF__scoring__chg__1m",
+      alias: "MF chg 1m",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__RSST__scoring__chg__1m",
+      alias: "RSST chg 1m",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__RV__scoring__chg__1m",
+      alias: "RV chg 1m",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__EQ__scoring__chg__1m",
+      alias: "EQ chg 1m",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__SALES__scoring__chg__1m",
+      alias: "SALES chg 1m",
+      dataType: tableau.dataTypeEnum.int
+    }, {
+      id: "models__SMARTSENT__scoring__chg__1m",
+      alias: "SMARTSENT chg 1m",
+      dataType: tableau.dataTypeEnum.int
     }];
 
     var tableSchema = {
@@ -159,6 +195,8 @@
           "derived__data__capiBaseCrncy__baseValueInBln": data[i]["derived.data.capiBaseCrncy.baseValueInBln"],
           "raw__sources__bbg__data__VOLATILITY_90D": data[i]["raw.sources.bbg.data.VOLATILITY_90D"],
           "raw__sources__bbg__data__CHG_PCT_1YR": data[i]["raw.sources.bbg.data.CHG_PCT_1YR"],
+          "raw__sources__bbg__data__REL_1M": data[i]["raw.sources.bbg.data.REL_1M"],
+          "raw__sources__bbg__data__REL_3M": data[i]["raw.sources.bbg.data.REL_3M"],
           "models__GROWTH__CURRENT_EPSMthChg": data[i]["models.GROWTH.components.CURRENT_EPSMthChg.intermediary_score"],
           "models__GROWTH__PAST_EPSStability": data[i]["models.GROWTH.components.PAST_EPSStability.intermediary_score"],
           "models__GROWTH__CURRENT_BEstEPS4WeekChangeNextYear": data[i]["models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.intermediary_score"],
@@ -181,6 +219,15 @@
           "models__SALES__scoring__final_score": data[i]["models.SALES.scoring.final_score"],
 
           "models__SMARTSENT__scoring__final_score": data[i]["models.SMARTSENT.scoring.final_score"],
+
+          "models__GROWTH__scoring__chg__1m": data[i]["models.GROWTH.scoring.chg.1m"],
+          "models__MF__scoring__chg__1m": data[i]["models.MF.scoring.chg.1m"],
+          "models__RSST__scoring__chg__1m": data[i]["models.RSST.scoring.chg.1m"],
+          "models__RV__scoring__chg__1m": data[i]["models.RV.scoring.chg.1m"],
+          "models__EQ__scoring__chg__1m": data[i]["models.EQ.scoring.chg.1m"],
+          "models__SALES__scoring__chg__1m": data[i]["models.SALES.scoring.chg.1m"],
+          "models__SMARTSENT__scoring__chg__1m": data[i]["models.SMARTSENT.scoring.chg.1m"],
+
         });
       }
 

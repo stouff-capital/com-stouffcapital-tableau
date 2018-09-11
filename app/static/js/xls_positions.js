@@ -86,7 +86,7 @@
     id: 'underlying_beta',
     alias: 'XLS Underlying Beta',
     dataType: tableau.dataTypeEnum.float
-  }, {
+  }, /*{
     id: 'underlying_rel1d',
     alias: 'XLS Relative Return 1d',
     dataType: tableau.dataTypeEnum.float
@@ -98,7 +98,7 @@
     id: 'underlying_rel1m',
     alias: 'XLS Relative Return 1m',
     dataType: tableau.dataTypeEnum.float
-  }, {
+  },*/ {
     id: 'position_id',
     alias: 'XLS Position Id',
     dataType: tableau.dataTypeEnum.string
