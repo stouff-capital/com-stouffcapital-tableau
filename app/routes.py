@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from config import Config
 
 import os
+import zipfile
 import json
 import datetime
 
@@ -133,8 +134,21 @@ def upload():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU ))
+            file.save( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU) )
             app.logger.info('save as: ' + FILENAME_TABLEAU )
+
+            df = pd.read_csv( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU), sep=";")
+            app.logger.info(f'len file: {len(df)}')
+
+            try:
+                data_datetime = df['_index'].values[0].replace("central-", "")
+                #tableau_zip = zipfile.ZipFile( os.path.join(UPLOAD_FOLDER, f'tableau-{datetime.datetime.now().isoformat()[:10].replace("-", ".")}.zip'), 'w')
+                tableau_zip = zipfile.ZipFile( os.path.join(UPLOAD_FOLDER, f'tableau-{data_datetime}.zip'), 'w')
+                tableau_zip.write( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU), compress_type=zipfile.ZIP_DEFLATED)
+                tableau_zip.close()
+                app.logger.info(f'save as: tableau-{data_datetime}.zip' )
+            except:
+                pass
 
             return render_template("last.html")
 

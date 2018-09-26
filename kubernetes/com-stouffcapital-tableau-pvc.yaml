@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: com-stouffcapital-tableau-pv-claim
+  labels:
+    app: com-stouffcapital-tableau
+spec:
+  storageClassName: rook-block
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi

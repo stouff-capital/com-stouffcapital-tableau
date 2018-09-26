@@ -60,3 +60,10 @@ spec:
               key: github-client-secret
         ports:
         - containerPort: 5000
+        volumeMounts:
+        - name: tableau-persistent-storage
+          mountPath: /app/app/static/data
+      volumes:
+      - name: tableau-persistent-storage
+        persistentVolumeClaim:
+          claimName: com-stouffcapital-tableau-pv-claim
