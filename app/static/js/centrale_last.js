@@ -173,8 +173,10 @@
 
   // Download the data
   myConnector.getData = function(table, doneCallback) {
-    $.getJSON("tableau/data/centrale", function(data) {
 
+    var connectionDataObj = tableau.connectionData ? JSON.parse(tableau.connectionData) : {host: 'tableau/data/centrale'};
+
+    $.getJSON(connectionDataObj.host, function(data) {
       tableData = [];
 
       // Iterate over the JSON object
@@ -238,11 +240,20 @@
 
   tableau.registerConnector(myConnector);
 
+
   // Create event listeners for when the user submits the form
   $(document).ready(function() {
-    //$("#submitButton").click(function() {
+    $("#submitButton").click(function() {
       tableau.connectionName = "Centrale Feed"; // This will be the data source name in Tableau
       tableau.submit(); // This sends the connector object to Tableau
-    //});
+    });
+
+
+    $(".scregionmodel").on('click',function() {
+      tableau.connectionData = JSON.stringify( {host: '/tableau/data/sc/region/' + $(this).data('region') + '/model/' + $(this).data('model') } );
+      tableau.connectionName = "Centrale Feed"; // This will be the data source name in Tableau
+      tableau.submit(); // This sends the connector object to Tableau
+    });
+    
   });
 })();

@@ -7,8 +7,39 @@
 <div class="container container-table">
   <div class="row vertical-center-row">
     <div class="text-center col-md-4 col-md-offset-4">
-      <button type="button" id="submitButton" class="btn btn-success" style="margin: 10px;">Get Data!</button>
+      <button type="button" id="submitButton" class="btn btn-success" style="margin: 10px;">Get whole universe</button>
     </div>
+  </div>
+
+  <div class="jumbotron">
+    <h1 class="display-4">SC</h1>
+    <p class="lead">Suggested portfolio.</p>
+    <hr class="my-4">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          {% for region in regions %}
+            <th scope="col">{{region}}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in models %}
+          <tr>
+            <th scope="row">{{model}}</th>
+
+            {% for region in regions %}
+              <td>
+                <button data-region="{{region}}" data-model="{{model}}" type="button" class="btn btn-primary scregionmodel">
+                  <i class="fas fa-cloud-download-alt"></i>
+                </button>
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 {% endblock %}

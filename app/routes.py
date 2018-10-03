@@ -46,6 +46,9 @@ def allowed_file(filename):
 def centrale_entry():
 
     if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
+        df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
+
+        return render_template('last.html', regions=df['asset.region.MatrixRegion'].unique(), models=['growth', 'slowdown'] )
         return render_template("last.html")
     else:
         return render_template("upload.html")
@@ -155,6 +158,85 @@ def upload():
         else:
             app.logger.warning('wrong extension')
             return render_template('upload.html')
+
+@app.route('/sc', methods=['GET'])
+def sc_frontend():
+    df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
+
+    return render_template('sc.html', regions=df['asset.region.MatrixRegion'].unique(), models=['growth', 'slowdown'] )
+
+
+@app.route('/tableau/data/sc/region/<string:region>/model/<string:model>', methods=['GET'])
+def sc_region_model(region, model):
+    df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
+
+    if model == 'growth':
+        df = sc(df, region, [['models.GROWTH.scoring.final_score', 0.3],
+         ['models.GROWTH.scoring.chg.1m', 0.1],
+         ['models.RV.scoring.final_score', 0.1],
+         ['raw.sources.bbg.data.REL_1M adj', 0.15],
+         ['models.GROWTH.components.CURRENT_EPSMthChg.intermediary_score', 0.05], ['models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.intermediary_score', 0.05], ['models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.intermediary_score', 0.05], ['models.GROWTH.components.NEXT_EPSGrowth.intermediary_score', 0.0], ['models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.intermediary_score', 0.0], ['models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.intermediary_score', 0.05]
+        ], [ ['raw.sources.bbg.data.VOLATILITY_90D', 0.15] ] )
+    elif model == 'slowdown':
+        df = sc(df, region, [['models.GROWTH.scoring.final_score', 0.5],
+         ['models.EQ.scoring.final_score', 0.2]
+        ], [ ['raw.sources.bbg.data.VOLATILITY_90D', 0.3] ])
+    elif model == 'lowvol':
+        pass
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+    return jsonify( df.to_dict(orient='records') )
+    return jsonify( df[0:5].to_dict(orient='records') )
+
+
+def sc(df, region, h_asc, h_desc, TARGET_SECTOR = 10, limitCapi = 4):
+    df = df[ df['asset.region.MatrixRegion'] == region ]
+
+    df = df[ df['derived.data.capiBaseCrncy.baseValueInBln'] > limitCapi ]
+
+    TARGET_COMPANY = len(df['asset.GICS_SECTOR_NAME'].unique()) * TARGET_SECTOR
+
+    df = df[ df['models.GROWTH.scoring.final_score']>=  0.9 * 55]
+
+    try:
+        df['raw.sources.bbg.data.REL_1M adj'] = -((df['raw.sources.bbg.data.REL_1M']-2)**2)
+    except:
+        df['raw.sources.bbg.data.REL_1M adj'] = 0
+
+    for h in h_asc:
+        try:
+            df['Rank_' + h[0] ] = df[ h[0] ].rank(ascending=1)
+        except:
+            df['Rank_' + h[0] ] = 0
+
+    for h in h_desc:
+        try:
+            df['Rank_' + h[0] ] = df[ h[0] ].rank(ascending=0)
+        except:
+            df['Rank_' + h[0] ] = 0
+
+    df['Score'] = 0.0
+    for h in h_asc + h_desc:
+        df['Score'] = df['Score'] +  h[1] * df['Rank_' + h[0] ]
+
+    dict_alloc = {}
+    for s in df['asset.GICS_SECTOR_NAME'].unique():
+        dict_alloc[s] = []
+
+    for c in df.sort_values('Score', ascending=False).to_dict(orient='record'):
+        if len( dict_alloc[ c['asset.GICS_SECTOR_NAME'] ] )>= TARGET_SECTOR:
+            pass
+        else:
+            dict_alloc[ c['asset.GICS_SECTOR_NAME'] ].append( c )
+
+    alloc = []
+    for s in dict_alloc:
+        for c in dict_alloc[s]:
+            alloc.append(c)
+    df_final = pd.DataFrame( alloc )
+
+    return df[ df['ticker.given'].isin( df_final['ticker.given'] ) ]
 
 
 @app.route('/tableau/data/centrale')

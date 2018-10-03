@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block wdcscript %}
+<script src="{{url_for('static', filename='js/centrale_last.js')}}" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        {% for region in regions %}
+          <th scope="col">{{region}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for model in models %}
+        <tr>
+          <th scope="row">{{model}}</th>
+
+          {% for region in regions %}
+            <td><button data-region="{{region}}" data-model="{{model}}" type="button" class="btn btn-primary scregionmodel">Retrive suggestions</button></td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
