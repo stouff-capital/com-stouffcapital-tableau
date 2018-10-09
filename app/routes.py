@@ -1,5 +1,5 @@
 from app import app
-from flask import jsonify, make_response, redirect, render_template, request, url_for
+from flask import current_app, jsonify, make_response, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
 from config import Config
@@ -113,6 +113,7 @@ def xls_positions():
     if os.path.isfile( UPLOAD_FOLDER + FILENAME_XLS ):
         return render_template("xls_positions.html")
     else:
+        current_app.logger.warning('missing file: ' + FILENAME_XLS)
         return jsonfiy({'status': 'error', 'error': 'data missing'})
 
 
