@@ -69,6 +69,42 @@
       alias: 'REL_3M',
       dataType: tableau.dataTypeEnum.float
     }, {
+      id: 'raw__sources__bbg__data__HIST_PUT_IMP_VOL',
+      alias: 'HIST_PUT_IMP_VOL',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__BEST_TARGET_3MO_CHG',
+      alias: 'BEST_TARGET_3MO_CHG',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__LATEST_ANN_DT_QTRLY',
+      alias: 'LATEST_ANN_DT_QTRLY',
+      dataType: tableau.dataTypeEnum.date
+    }, {
+      id: 'raw__sources__bbg__data__EXPECTED_REPORT_DT',
+      alias: 'EXPECTED_REPORT_DT',
+      dataType: tableau.dataTypeEnum.date
+    }, {
+      id: 'raw__sources__bbg__data__EXPECTED_REPORT_TIME',
+      alias: 'EXPECTED_REPORT_TIME',
+      dataType: tableau.dataTypeEnum.string
+    }, {
+      id: 'raw__sources__bbg__data__SKEW_MONEYNESS_SPREAD',
+      alias: 'SKEW_MONEYNESS_SPREAD',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__EARNINGS_RELATED_IMPLIED_MOVE',
+      alias: 'EARNINGS_RELATED_IMPLIED_MOVE',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__PUT_CALL_OPEN_INTEREST_RATIO',
+      alias: 'PUT_CALL_OPEN_INTEREST_RATIO',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__1M_SHORT_INT_PCT',
+      alias: '1M_SHORT_INT_PCT',
+      dataType: tableau.dataTypeEnum.float
+    }, {
       id: 'raw__sources__bbg__data__PX_TO_CASH_FLOW',
       alias: 'PX_TO_CASH_FLOW',
       dataType: tableau.dataTypeEnum.float
@@ -291,6 +327,17 @@
           'raw__sources__bbg__data__CHG_PCT_1YR': data[i]['raw.sources.bbg.data.CHG_PCT_1YR'],
           'raw__sources__bbg__data__REL_1M': data[i]['raw.sources.bbg.data.REL_1M'],
           'raw__sources__bbg__data__REL_3M': data[i]['raw.sources.bbg.data.REL_3M'],
+
+          'raw__sources__bbg__data__HIST_PUT_IMP_VOL': data[i]['raw.sources.bbg.data.HIST_PUT_IMP_VOL'],
+          'raw__sources__bbg__data__BEST_TARGET_3MO_CHG': data[i]['raw.sources.bbg.data.BEST_TARGET_3MO_CHG'],
+          'raw__sources__bbg__data__LATEST_ANN_DT_QTRLY': data[i]['raw.sources.bbg.data.LATEST_ANN_DT_QTRLY'],
+          'raw__sources__bbg__data__EXPECTED_REPORT_DT': data[i]['raw.sources.bbg.data.EXPECTED_REPORT_DT'],
+          'raw__sources__bbg__data__EXPECTED_REPORT_TIME': data[i]['raw.sources.bbg.data.EXPECTED_REPORT_TIME'],
+          'raw__sources__bbg__data__SKEW_MONEYNESS_SPREAD': data[i]['raw.sources.bbg.data.SKEW_MONEYNESS_SPREAD'],
+          'raw__sources__bbg__data__EARNINGS_RELATED_IMPLIED_MOVE': data[i]['raw.sources.bbg.data.EARNINGS_RELATED_IMPLIED_MOVE'],
+          'raw__sources__bbg__data__PUT_CALL_OPEN_INTEREST_RATIO': data[i]['raw.sources.bbg.data.PUT_CALL_OPEN_INTEREST_RATIO'],
+          'raw__sources__bbg__data__1M_SHORT_INT_PCT': data[i]['raw.sources.bbg.data.1M_SHORT_INT_PCT'],
+
           'raw__sources__bbg__data__PX_TO_CASH_FLOW': data[i]['raw.sources.bbg.data.PX_TO_CASH_FLOW'],
           'raw__sources__bbg__data__BEST_PE_RATIO': data[i]['raw.sources.bbg.data.BEST_PE_RATIO'],
           'raw__sources__bbg__data__PX_SALES_RATIO': data[i]['raw.sources.bbg.data.BEST_PX_SALES_RATIO'],
