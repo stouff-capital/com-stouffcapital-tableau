@@ -21,6 +21,8 @@ UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/static/data/'
 FILENAME_TABLEAU = 'tableau.csv'
 FILENAME_XLS = 'xls.json'
 
+MODELS = ['growth', 'slowdown', 'u2']
+
 
 from flask_basicauth import BasicAuth
 app.config['BASIC_AUTH_USERNAME'] = Config.BASIC_AUTH_USERNAME
@@ -48,8 +50,7 @@ def centrale_entry():
     if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
         df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
 
-        return render_template('last.html', regions=df['asset.region.MatrixRegion'].unique(), models=['growth', 'slowdown'] )
-        return render_template("last.html")
+        return render_template('last.html', regions=df['asset.region.MatrixRegion'].unique(), models=MODELS )
     else:
         return render_template("upload.html")
 
@@ -146,7 +147,6 @@ def upload():
 
             try:
                 data_datetime = df['_index'].values[0].replace("central-", "")
-                #tableau_zip = zipfile.ZipFile( os.path.join(UPLOAD_FOLDER, f'tableau-{datetime.datetime.now().isoformat()[:10].replace("-", ".")}.zip'), 'w')
                 tableau_zip = zipfile.ZipFile( os.path.join(UPLOAD_FOLDER, f'tableau-{data_datetime}.zip'), 'w')
                 tableau_zip.write( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU), compress_type=zipfile.ZIP_DEFLATED)
                 tableau_zip.close()
@@ -154,7 +154,7 @@ def upload():
             except:
                 pass
 
-            return render_template("last.html")
+            return centrale_entry()
 
         else:
             app.logger.warning('wrong extension')
@@ -164,7 +164,7 @@ def upload():
 def sc_frontend():
     df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
 
-    return render_template('sc.html', regions=df['asset.region.MatrixRegion'].unique(), models=['growth', 'slowdown'] )
+    return render_template('sc.html', regions=df['asset.region.MatrixRegion'].unique(), models=MODELS )
 
 
 @app.route('/tableau/data/sc/region/<string:region>/model/<string:model>', methods=['GET'])
@@ -172,16 +172,30 @@ def sc_region_model(region, model):
     df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
 
     if model == 'growth':
-        df = sc(df, region, [['models.GROWTH.scoring.final_score', 0.3],
-         ['models.GROWTH.scoring.chg.1m', 0.1],
-         ['models.RV.scoring.final_score', 0.1],
-         ['raw.sources.bbg.data.REL_1M adj', 0.15],
-         ['models.GROWTH.components.CURRENT_EPSMthChg.intermediary_score', 0.05], ['models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.intermediary_score', 0.05], ['models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.intermediary_score', 0.05], ['models.GROWTH.components.NEXT_EPSGrowth.intermediary_score', 0.0], ['models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.intermediary_score', 0.0], ['models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.intermediary_score', 0.05]
-        ], [ ['raw.sources.bbg.data.VOLATILITY_90D', 0.15] ] )
+        df = sc(df, region, [
+            ['models.GROWTH.scoring.final_score', 0.3],
+            ['models.GROWTH.scoring.chg.1m', 0.1],
+            ['models.RV.scoring.final_score', 0.1],
+            ['raw.sources.bbg.data.REL_1M adj', 0.15],
+            ['models.GROWTH.components.CURRENT_EPSMthChg.intermediary_score', 0.05], ['models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.intermediary_score', 0.05], ['models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.intermediary_score', 0.05], ['models.GROWTH.components.NEXT_EPSGrowth.intermediary_score', 0.0], ['models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.intermediary_score', 0.0], ['models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.intermediary_score', 0.05]
+        ], [
+            ['raw.sources.bbg.data.VOLATILITY_90D', 0.15]
+        ] )
     elif model == 'slowdown':
-        df = sc(df, region, [['models.GROWTH.scoring.final_score', 0.5],
-         ['models.EQ.scoring.final_score', 0.2]
-        ], [ ['raw.sources.bbg.data.VOLATILITY_90D', 0.3] ])
+        df = sc(df, region, [
+            ['models.GROWTH.scoring.final_score', 0.5],
+            ['models.EQ.scoring.final_score', 0.2]
+        ], [
+            ['raw.sources.bbg.data.VOLATILITY_90D', 0.3]
+        ])
+    elif model == 'u2':
+        df = sc(df, region, [
+            ['models.GROWTH.scoring.final_score', 0.25],
+            ['models.RV.scoring.final_scor', 0.4],
+            ['models.RSST.scoring.final_score', 0.12]
+        ], [
+            ['raw.sources.bbg.data.REL_3M', 0.23]
+        ])
     elif model == 'lowvol':
         pass
 
