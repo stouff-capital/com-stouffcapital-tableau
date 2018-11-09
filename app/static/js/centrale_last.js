@@ -201,6 +201,10 @@
       alias: 'RSST',
       dataType: tableau.dataTypeEnum.int
     }, {
+      id: 'models__LOWVOL__scoring__final_score',
+      alias: 'LOWVOL',
+      dataType: tableau.dataTypeEnum.int
+    }, {
       id: 'models__RV__PX_TO_CASH_FLOW',
       alias: 'RV__PX_TO_CASH_FLOW',
       dataType: tableau.dataTypeEnum.int
@@ -366,6 +370,8 @@
           'models__MF__scoring__final_score': data[i]['models.MF.scoring.final_score'],
 
           'models__RSST__scoring__final_score': data[i]['models.RSST.scoring.final_score'],
+
+          'models__LOWVOL__scoring__final_score': data[i]['models.LOWVOL.scoring.final_score'],
 
           'models__RV__PX_TO_CASH_FLOW': data[i]['models.RV.components.PX_TO_CASH_FLOW.intermediary_score'],
           'models__RV__BEST_PE_RATIO': data[i]['models.RV.components.BEST_PE_RATIO.intermediary_score'],
