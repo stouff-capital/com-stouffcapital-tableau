@@ -17,11 +17,11 @@ from requests.auth import HTTPBasicAuth
 AUTH=HTTPBasicAuth(Config.BASIC_AUTH_USERNAME, Config.BASIC_AUTH_PASSWORD )
 
 ALLOWED_EXTENSIONS = set(['csv', 'json'])
-UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/static/data/'
+UPLOAD_FOLDER = f'{os.path.dirname(os.path.abspath(__file__))}/static/data/'
 FILENAME_TABLEAU = 'tableau.csv'
 FILENAME_XLS = 'xls.json'
 
-MODELS = ['growth', 'slowdown', 'u2']
+MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
 
 from flask_basicauth import BasicAuth
@@ -47,8 +47,8 @@ def allowed_file(filename):
 @app.route('/last')
 def centrale_entry():
 
-    if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
-        df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}' ):
+        df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
 
         return render_template('last.html', regions=df['asset.region.MatrixRegion'].unique(), models=MODELS )
     else:
@@ -57,7 +57,7 @@ def centrale_entry():
 
 @app.route('/oauth')
 def centrale_last_oauth():
-    if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}' ):
         if not github.authorized:
             print( "centrale_entry:: ask for login" )
             return redirect(url_for("github.login"))
@@ -73,17 +73,17 @@ def centrale_last(token):
     if github.authorized:
         return render_template("oauth.html")
     else:
-        resp = requests.get('https://api.github.com/user', headers={'Authorization': 'token ' + token})
+        resp = requests.get('https://api.github.com/user', headers={'Authorization': f'token {token}'})
         print( resp.content )
 
         dict_resp = json.loads(resp.content)
         if 'message' not in dict_resp and 'login' in dict_resp:
 
-            #resp = requests.get('https://api.github.com/orgs/stouff-capital/members' , headers={'Authorization': 'token ' + token})
+            #resp = requests.get('https://api.github.com/orgs/stouff-capital/members' , headers={'Authorization': f'token {token}'})
             #list_members = json.loads( resp.content )
 
             # check memberships /orgs/:org/members/:username
-            resp = requests.get('https://api.github.com/orgs/stouff-capital/members/' + dict_resp['login'] , headers={'Authorization': 'token ' + token})
+            resp = requests.get(f'https://api.github.com/orgs/stouff-capital/members/{dict_resp["login"]}' , headers={'Authorization': f'token {token}'})
 
             if resp.status_code == 204:
                 return render_template("oauth.html")
@@ -95,7 +95,7 @@ def centrale_last(token):
 
 @app.route('/ib/eod/transactions')
 def ib_eod_transactions():
-    if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}' ):
         return render_template("ib_eod_transactions.html")
     else:
         return render_template("upload.html")
@@ -103,7 +103,7 @@ def ib_eod_transactions():
 
 @app.route('/ib/eod/positions')
 def ib_eod_positions():
-    if os.path.isfile( UPLOAD_FOLDER + FILENAME_TABLEAU ):
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}' ):
         return render_template("ib_eod_positions.html")
     else:
         return render_template("upload.html")
@@ -111,10 +111,10 @@ def ib_eod_positions():
 
 @app.route('/xls/positions')
 def xls_positions():
-    if os.path.isfile( UPLOAD_FOLDER + FILENAME_XLS ):
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_XLS}' ):
         return render_template("xls_positions.html")
     else:
-        current_app.logger.warning('missing file: ' + FILENAME_XLS)
+        current_app.logger.warning(f'missing file: {FILENAME_XLS}')
         return jsonfiy({'status': 'error', 'error': 'data missing'})
 
 
@@ -140,7 +140,7 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU) )
-            app.logger.info('save as: ' + FILENAME_TABLEAU )
+            app.logger.info(f'save as: {FILENAME_TABLEAU}' )
 
             df = pd.read_csv( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU), sep=";")
             app.logger.info(f'len file: {len(df)}')
@@ -162,14 +162,14 @@ def upload():
 
 @app.route('/sc', methods=['GET'])
 def sc_frontend():
-    df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
+    df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
 
     return render_template('sc.html', regions=df['asset.region.MatrixRegion'].unique(), models=MODELS )
 
 
 @app.route('/tableau/data/sc/region/<string:region>/model/<string:model>', methods=['GET'])
 def sc_region_model(region, model):
-    df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
+    df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
 
     if model == 'growth':
         df = sc(df, region, [
@@ -197,7 +197,24 @@ def sc_region_model(region, model):
             ['raw.sources.bbg.data.REL_3M', 0.23]
         ])
     elif model == 'lowvol':
-        pass
+        df = sc(df, region, [
+            ['models.GROWTH.scoring.final_score', 0.5]
+        ], [
+            ['raw.sources.bbg.data.VOLATILITY_90D', 0.5]
+        ])
+    elif model == 'sales':
+        df = sc(df, region, [
+            ['models.GROWTH.scoring.final_score', 0.20],
+            ['models.SALES.scoring.final_score', 0.15],
+            ['models.RSST.scoring.final_score', 0.0],
+            ['models.RV.scoring.final_score', 0.05],
+            ['models.EQ.scoring.final_score', 0.05],
+            ['models.SMARTSENT.scoring.final_score', 0.10],
+            ['models.MF.scoring.final_score', 0.10],
+        ], [
+            ['raw.sources.bbg.data.VOLATILITY_30D', 0.175],
+            ['raw.sources.bbg.data.VOLATILITY_90D', 0.175]
+        ])
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
@@ -221,15 +238,15 @@ def sc(df, region, h_asc, h_desc, TARGET_SECTOR = 10, limitCapi = 4):
 
     for h in h_asc:
         try:
-            df['Rank_' + h[0] ] = df[ h[0] ].rank(ascending=1)
+            df[f'Rank_{h[0]}' ] = df[ h[0] ].rank(ascending=1)
         except:
-            df['Rank_' + h[0] ] = 0
+            df[f'Rank_{h[0]}' ] = 0
 
     for h in h_desc:
         try:
-            df['Rank_' + h[0] ] = df[ h[0] ].rank(ascending=0)
+            df[f'Rank_{h[0]}' ] = df[ h[0] ].rank(ascending=0)
         except:
-            df['Rank_' + h[0] ] = 0
+            df[f'Rank_{h[0]}' ] = 0
 
     df['Score'] = 0.0
     for h in h_asc + h_desc:
@@ -257,7 +274,7 @@ def sc(df, region, h_asc, h_desc, TARGET_SECTOR = 10, limitCapi = 4):
 @app.route('/tableau/data/centrale')
 def tableau_data_centrale():
 
-    df = pd.read_csv( UPLOAD_FOLDER + FILENAME_TABLEAU, sep=";" )
+    df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
@@ -271,7 +288,7 @@ def tableau_data_centrale():
 def tableau_data_xls_uppload():
     df = pd.DataFrame( request.get_json() )
 
-    df.to_json( path_or_buf=UPLOAD_FOLDER + FILENAME_XLS, orient='records' )
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_XLS}', orient='records' )
 
     return jsonify( {
         'status': 'ok',
@@ -286,7 +303,7 @@ def tableau_data_xls_uppload():
 @basic_auth.required
 def tableau_data_ib_transactions():
 
-    res = requests.get(Config.IB_HOST + '/reports/ib/eod/transactions', auth=AUTH)
+    res = requests.get(f'{Config.IB_HOST}/reports/ib/eod/transactions', auth=AUTH)
     df = pd.read_json(res.content, orient='records' )
 
     #patch missing values
@@ -300,17 +317,17 @@ def tableau_data_ib_transactions():
 @basic_auth.required
 def tableau_data_ib_positions():
 
-    res = requests.get(Config.IB_HOST + '/reports/ib/eod/positions', auth=AUTH)
+    res = requests.get(f'{Config.IB_HOST}/reports/ib/eod/positions', auth=AUTH)
     df = pd.read_json(res.content, orient='records' )
 
     list_positions = df.to_dict(orient='records')
-    df_xls = pd.read_json( UPLOAD_FOLDER + FILENAME_XLS, orient='records' )
+    df_xls = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_XLS}', orient='records' )
 
     # option premiums -> delta expositions
     for openPosition in list_positions:
         openPosition['position_exposureNetBase'] = openPosition['valeurBase']
         if openPosition["Catégorie d\'actifs"][:6] == 'Option':
-            mask = df_xls[ df_xls['position_id'] == 'U1160693_IB_' + openPosition['Identifier'] ]
+            mask = df_xls[ df_xls['position_id'] == f'U1160693_IB_{openPosition["Identifier"]}' ]
             if len(mask) > 0:
                      openPosition['position_exposureNetBase'] = mask['position_exposureNetBase'].values[0]
             else:
@@ -330,7 +347,7 @@ def tableau_data_ib_positions():
 @basic_auth.required
 def tableau_data_xls_positions():
 
-    df = pd.read_json(UPLOAD_FOLDER + FILENAME_XLS, orient='records' )
+    df = pd.read_json(f'{UPLOAD_FOLDER}{FILENAME_XLS}', orient='records' )
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
@@ -343,7 +360,7 @@ def tableau_data_xls_positions():
 def tableau_data_centrale_histo():
 
     from sqlalchemy import create_engine
-    engine = create_engine('postgresql://postgres:' + Config.POSTGRES_PASSWORD + '@' +  Config.POSTGRES_HOST + ':' + Config.POSTGRES_PORT + '/centralhisto')
+    engine = create_engine(f'postgresql://postgres:{Config.POSTGRES_PASSWORD}@{Config.POSTGRES_HOST}:{Config.POSTGRES_PORT}/centralhisto')
 
     # df = pd.read_sql_query("SELECT time_bucket('30 days', dateeval) as one_month, avg(rank) FROM ranks WHERE ticker='AAPL US EQUITY' GROUP BY one_month;", con=engine)
     df = pd.read_sql_query("SELECT * FROM ranks WHERE dateeval>='2017-01-01' ORDER BY dateeval DESC, Ticker ASC;", con=engine)
