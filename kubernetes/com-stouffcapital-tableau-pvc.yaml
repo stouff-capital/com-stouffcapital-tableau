@@ -2,12 +2,13 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: com-stouffcapital-tableau-pv-claim
+  namespace: tableau
   labels:
     app: com-stouffcapital-tableau
 spec:
-  storageClassName: rook-block
+  storageClassName: rook-ceph-block
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 512Mi
+      storage: 256Mi

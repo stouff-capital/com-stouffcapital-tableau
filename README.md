@@ -4,8 +4,8 @@ http://tableau.github.io/webdataconnector/docs/
 ## kubernetes
 
 **dependency with timescaledb** and **ib-backend** auth xls data
-`kubectl create secret generic tableau --from-literal=github-client-id=<clientId> --from-literal=github-client-secret=<clientSecret>`
-
-`kubectl run com-stouffcapital-tableau --image=gchevalley/com-stouffcapital-tableau --port=5000`
-
-`kubectl expose deployment com-stouffcapital-tableau --type=NodePort`
+1. `kubectl create namespace tableau`
+1. `kubectl -n tableau create secret generic tableau --from-literal=github-client-id=<clientId> --from-literal=github-client-secret=<clientSecret>`
+1. `kubectl create -f kubernetes/com-stouffcapital-tableau-pvc.yaml`
+1. `kubectl create -f kubernetes/com-stouffcapital-tableau.yaml`
+1. `kubectl create -f kubernetes/com-stouffcapital-tableau-ing-ssl.yaml`
