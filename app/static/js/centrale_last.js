@@ -69,6 +69,22 @@
       alias: 'REL_3M',
       dataType: tableau.dataTypeEnum.float
     }, {
+      id: 'raw__sources__bbg__data__BEST_EPS_3MO_PCT_CHG',
+      alias: 'BEST_EPS_3MO_PCT_CHG',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__BEST_EPS_6MO_PCT_CHG',
+      alias: 'BEST_EPS_6MO_PCT_CHG',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__EPS_SURPRISE_LAST_QTR',
+      alias: 'EPS_SURPRISE_LAST_QTR',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__EPS_SURPRISE_LAST_ANNUAL',
+      alias: 'EPS_SURPRISE_LAST_ANNUAL',
+      dataType: tableau.dataTypeEnum.float
+    }, {
       id: 'raw__sources__bbg__data__HIST_PUT_IMP_VOL',
       alias: 'HIST_PUT_IMP_VOL',
       dataType: tableau.dataTypeEnum.float
@@ -331,6 +347,12 @@
           'raw__sources__bbg__data__CHG_PCT_1YR': data[i]['raw.sources.bbg.data.CHG_PCT_1YR'],
           'raw__sources__bbg__data__REL_1M': data[i]['raw.sources.bbg.data.REL_1M'],
           'raw__sources__bbg__data__REL_3M': data[i]['raw.sources.bbg.data.REL_3M'],
+
+          'raw__sources__bbg__data__BEST_EPS_3MO_PCT_CHG': data[i]['raw.sources.bbg.data.BEST_EPS_3MO_PCT_CHG'],
+          'raw__sources__bbg__data__BEST_EPS_6MO_PCT_CHG': data[i]['raw.sources.bbg.data.BEST_EPS_6MO_PCT_CHG'],
+
+          'raw__sources__bbg__data__EPS_SURPRISE_LAST_QTR': data[i]['raw.sources.bbg.data.EPS_SURPRISE_LAST_QTR'],
+          'raw__sources__bbg__data__EPS_SURPRISE_LAST_ANNUAL': data[i]['raw.sources.bbg.data.EPS_SURPRISE_LAST_ANNUAL'],
 
           'raw__sources__bbg__data__HIST_PUT_IMP_VOL': data[i]['raw.sources.bbg.data.HIST_PUT_IMP_VOL'],
           'raw__sources__bbg__data__BEST_TARGET_3MO_CHG': data[i]['raw.sources.bbg.data.BEST_TARGET_3MO_CHG'],
