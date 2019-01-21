@@ -49,6 +49,10 @@
       alias: 'REGION',
       dataType: tableau.dataTypeEnum.string
     }, {
+      id: 'derived__data__capiLocalCrncy__localValueInBln',
+      alias: 'capiLocalInBln',
+      dataType: tableau.dataTypeEnum.float
+    }, {
       id: 'derived__data__capiBaseCrncy__baseValueInBln',
       alias: 'capiBaseInBln',
       dataType: tableau.dataTypeEnum.float
@@ -67,6 +71,54 @@
     }, {
       id: 'raw__sources__bbg__data__REL_3M',
       alias: 'REL_3M',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__PX_LAST',
+      alias: 'PX_LAST',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__CHG_PCT_5D',
+      alias: 'CHG_PCT_5D',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__CHG_PCT_30D',
+      alias: 'CHG_PCT_30D',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__CHG_PCT_100D',
+      alias: 'CHG_PCT_100D',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__CHG_PCT_YTD',
+      alias: 'CHG_PCT_YTD',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__RSI_14D',
+      alias: 'RSI_14D',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__MOV_AVG_20D',
+      alias: 'MOV_AVG_20D',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__MOV_AVG_50D',
+      alias: 'MOV_AVG_50D',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__MOV_AVG_200D',
+      alias: 'MOV_AVG_200D',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__HIGH_52WEEK',
+      alias: 'HIGH_52WEEK',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__LOW_52WEEK',
+      alias: 'LOW_52WEEK',
+      dataType: tableau.dataTypeEnum.float
+    }, {
+      id: 'raw__sources__bbg__data__NET_DEBT_TO_EBITDA',
+      alias: 'NET_DEBT_TO_EBITDA',
       dataType: tableau.dataTypeEnum.float
     }, {
       id: 'raw__sources__bbg__data__BEST_EPS_3MO_PCT_CHG',
@@ -209,6 +261,10 @@
       alias: 'GROWTH',
       dataType: tableau.dataTypeEnum.int
     }, {
+      id: 'models__EPS__scoring__final_score',
+      alias: 'EPS',
+      dataType: tableau.dataTypeEnum.int
+    }, {
       id: 'models__MF__scoring__final_score',
       alias: 'MF',
       dataType: tableau.dataTypeEnum.int
@@ -342,11 +398,26 @@
           'asset__COUNTRY_ISO__ISOALPHA2Code': data[i]['asset.COUNTRY_ISO.ISOALPHA2Code'],
           'asset__COUNTRY_ISO__name': data[i]['asset.COUNTRY_ISO.name'],
           'asset__region__MatrixRegion': data[i]['asset.region.MatrixRegion'],
+          'derived__data__capiLocalCrncy__localValueInBln': data[i]['derived.data.capiLocalCrncy.localValueInBln'],
           'derived__data__capiBaseCrncy__baseValueInBln': data[i]['derived.data.capiBaseCrncy.baseValueInBln'],
           'raw__sources__bbg__data__VOLATILITY_90D': data[i]['raw.sources.bbg.data.VOLATILITY_90D'],
           'raw__sources__bbg__data__CHG_PCT_1YR': data[i]['raw.sources.bbg.data.CHG_PCT_1YR'],
           'raw__sources__bbg__data__REL_1M': data[i]['raw.sources.bbg.data.REL_1M'],
           'raw__sources__bbg__data__REL_3M': data[i]['raw.sources.bbg.data.REL_3M'],
+
+          'raw__sources__bbg__data__PX_LAST': data[i]['raw.sources.bbg.data.PX_LAST'],
+          'raw__sources__bbg__data__CHG_PCT_5D': data[i]['raw.sources.bbg.data.CHG_PCT_5D'],
+          'raw__sources__bbg__data__CHG_PCT_30D': data[i]['raw.sources.bbg.data.CHG_PCT_30D'],
+          'raw__sources__bbg__data__CHG_PCT_100D': data[i]['raw.sources.bbg.data.CHG_PCT_100D'],
+          'raw__sources__bbg__data__CHG_PCT_YTD': data[i]['raw.sources.bbg.data.CHG_PCT_YTD'],
+          'raw__sources__bbg__data__RSI_14D': data[i]['raw.sources.bbg.data.RSI_14D'],
+          'raw__sources__bbg__data__MOV_AVG_20D': data[i]['raw.sources.bbg.data.MOV_AVG_20D'],
+          'raw__sources__bbg__data__MOV_AVG_50D': data[i]['raw.sources.bbg.data.MOV_AVG_50D'],
+          'raw__sources__bbg__data__MOV_AVG_200D': data[i]['raw.sources.bbg.data.MOV_AVG_200D'],
+          'raw__sources__bbg__data__HIGH_52WEEK': data[i]['raw.sources.bbg.data.HIGH_52WEEK'],
+          'raw__sources__bbg__data__LOW_52WEEK': data[i]['raw.sources.bbg.data.LOW_52WEEK'],
+          'raw__sources__bbg__data__NET_DEBT_TO_EBITDA': data[i]['raw.sources.bbg.data.NET_DEBT_TO_EBITDA'],
+
 
           'raw__sources__bbg__data__BEST_EPS_3MO_PCT_CHG': data[i]['raw.sources.bbg.data.BEST_EPS_3MO_PCT_CHG'],
           'raw__sources__bbg__data__BEST_EPS_6MO_PCT_CHG': data[i]['raw.sources.bbg.data.BEST_EPS_6MO_PCT_CHG'],
@@ -388,6 +459,8 @@
           'models__GROWTH__CURRENT_RatioEPSNextYrCurrentYr': data[i]['models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.intermediary_score'],
 
           'models__GROWTH__scoring__final_score': data[i]['models.GROWTH.scoring.final_score'],
+
+          'models__EPS__scoring__final_score': data[i]['models.EPS.scoring.final_score'],
 
           'models__MF__scoring__final_score': data[i]['models.MF.scoring.final_score'],
 

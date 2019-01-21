@@ -9,3 +9,7 @@ http://tableau.github.io/webdataconnector/docs/
 1. `kubectl create -f kubernetes/com-stouffcapital-tableau-pvc.yaml`
 1. `kubectl create -f kubernetes/com-stouffcapital-tableau.yaml`
 1. `kubectl create -f kubernetes/com-stouffcapital-tableau-ing-ssl.yaml`
+
+
+### rolling-upgrades
+` kubectl -n tableau set image deployment/com-stouffcapital-tableau com-stouffcapital-tableau=stouffcapital/com-stouffcapital-tableau:<tag>`

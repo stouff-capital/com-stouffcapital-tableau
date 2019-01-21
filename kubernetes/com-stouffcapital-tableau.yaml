@@ -28,7 +28,7 @@ spec:
         app: com-stouffcapital-tableau
     spec:
       containers:
-      - image: stouffcapital/com-stouffcapital-tableau:fce4ec5
+      - image: stouffcapital/com-stouffcapital-tableau:84d2eae  
         name: com-stouffcapital-tableau
         env:
         - name: POSTGRES_HOST
