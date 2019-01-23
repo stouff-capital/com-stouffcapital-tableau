@@ -276,6 +276,10 @@ def tableau_data_centrale():
 
     df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
 
+    # add metadata
+    df["data.datestamp"] = df["_index"].str.replace("central-", "").str.replace(".", "-")
+
+
     #patch missing values
     df = df.where((pd.notnull(df)), None)
 
