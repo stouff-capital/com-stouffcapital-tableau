@@ -2,7 +2,7 @@
   // Create the connector object
   var myConnector = tableau.makeConnector();
 
-  
+
   // data model
   var dm = [{
     id: 'ticker__given',
@@ -11,6 +11,10 @@
   }, {
     id: 'data__datestamp',
     alias: 'DATESTAMP',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'reactiveData_date',
+    alias: 'REACTIVEDATESTAMP',
     dataType: tableau.dataTypeEnum.date
   }, {
     id: 'asset__NAME',
