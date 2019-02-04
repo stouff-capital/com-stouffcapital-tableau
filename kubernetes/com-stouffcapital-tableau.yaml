@@ -28,9 +28,14 @@ spec:
         app: com-stouffcapital-tableau
     spec:
       containers:
-      - image: stouffcapital/com-stouffcapital-tableau:84d2eae  
+      - image: stouffcapital/com-stouffcapital-tableau:84d2eae
         name: com-stouffcapital-tableau
         env:
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tableau
+              key: app-secret
         - name: POSTGRES_HOST
           value: timescaledb
         - name: POSTGRES_PASSWORD

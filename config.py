@@ -6,6 +6,7 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
+    APP_SECRET = os.getenv("APP_SECRET")
     POSTGRES_HOST = os.getenv("POSTGRES_HOST") or "localhost"
     POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
     POSTGRES_PORT = os.getenv("POSTGRES_PORT") or "5432"

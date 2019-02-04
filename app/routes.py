@@ -20,6 +20,7 @@ ALLOWED_EXTENSIONS = set(['csv', 'json'])
 UPLOAD_FOLDER = f'{os.path.dirname(os.path.abspath(__file__))}/static/data/'
 FILENAME_TABLEAU = 'tableau.csv'
 FILENAME_XLS = 'xls.json'
+FILENAME_SURP = 'surp.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -30,7 +31,7 @@ app.config['BASIC_AUTH_PASSWORD'] = Config.BASIC_AUTH_PASSWORD
 basic_auth = BasicAuth(app)
 
 from flask_dance.contrib.github import make_github_blueprint, github
-app.secret_key = "supersekrit"
+app.secret_key = Config.APP_SECRET
 blueprint = make_github_blueprint(
     client_id=Config.GITHUB_CLIENT_ID,
     client_secret=Config.GITHUB_CLIENT_SECRET,
@@ -301,6 +302,22 @@ def tableau_data_xls_uppload():
         'output': df.to_dict(orient='records')
     } )
 
+
+@app.route('/tableau/data/surp/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_surp_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    # processing pct values
+    for h in ['averageSurp', 'averageAbsSurp', 'averageAbsPxChg', 'implied1DayMove']:
+        df[h] = df[h] / 100
+    
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_SURP}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+    } )
 
 
 @app.route('/tableau/data/ib/eod/transactions')
