@@ -170,7 +170,8 @@ def sc_frontend():
 
 @app.route('/tableau/data/sc/region/<string:region>/model/<string:model>', methods=['GET'])
 def sc_region_model(region, model):
-    df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
+    #df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
+    df = prepare_dataset()
 
     if model == 'growth':
         df = sc(df, region, [
@@ -272,14 +273,29 @@ def sc(df, region, h_asc, h_desc, TARGET_SECTOR = 10, limitCapi = 4):
     return df[ df['ticker.given'].isin( df_final['ticker.given'] ) ]
 
 
+def prepare_dataset():
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}' ):
+        df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
+
+        # merge with other available datasets
+        if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_SURP}' ):
+            df_surp = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_SURP}', orient="records" )
+            df = df.merge(right=df_surp, how='left', left_on='ticker.given', right_on='ticker')
+
+
+        # add metadata
+        df["data.datestamp"] = df["_index"].str.replace("central-", "").str.replace(".", "-")
+    else:
+        df = pd.DataFrame([])
+
+    return df
+
+
+
 @app.route('/tableau/data/centrale')
 def tableau_data_centrale():
-
-    df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
-
-    # add metadata
-    df["data.datestamp"] = df["_index"].str.replace("central-", "").str.replace(".", "-")
-
+    #df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
+    df = prepare_dataset()
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
@@ -311,7 +327,7 @@ def tableau_data_surp_upload():
     # processing pct values
     for h in ['averageSurp', 'averageAbsSurp', 'averageAbsPxChg', 'implied1DayMove']:
         df[h] = df[h] / 100
-    
+
     df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_SURP}', orient='records' )
 
     return jsonify( {

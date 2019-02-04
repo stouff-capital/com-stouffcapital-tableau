@@ -125,6 +125,35 @@
     alias: 'NET_DEBT_TO_EBITDA',
     dataType: tableau.dataTypeEnum.float
   }, {
+    id: 'raw__sources__bbg__earningsHistory__averageAbsPxChg',
+    src: 'averageAbsPxChg',
+    alias: 'earningsHistory_averageAbsPxChg',
+    dataType: tableau.dataTypeEnum.float,
+    numberFormat: tableau.numberFormatEnum.percentage
+  }, {
+    id: 'raw__sources__bbg__earningsHistory__averageAbsSurp',
+    src: 'averageAbsSurp',
+    alias: 'earningsHistory_averageAbsSurp',
+    dataType: tableau.dataTypeEnum.float,
+    numberFormat: tableau.numberFormatEnum.percentage
+  }, {
+    id: 'raw__sources__bbg__earningsHistory__averageSurp',
+    src: 'averageSurp',
+    alias: 'earningsHistory_averageSurp',
+    dataType: tableau.dataTypeEnum.float,
+    numberFormat: tableau.numberFormatEnum.percentage
+  }, {
+    id: 'raw__sources__bbg__earningsHistory__implied1DayMove',
+    src: 'implied1DayMove',
+    alias: 'earningsHistory_implied1DayMove',
+    dataType: tableau.dataTypeEnum.float,
+    numberFormat: tableau.numberFormatEnum.percentage
+  }, {
+    id: 'raw__sources__bbg__earningsHistory__surpPxChgCorr',
+    src: 'surpPxChgCorr',
+    alias: 'earningsHistory_surpPxChgCorr',
+    dataType: tableau.dataTypeEnum.float
+  }, {
     id: 'raw__sources__bbg__data__BEST_EPS_3MO_PCT_CHG',
     alias: 'BEST_EPS_3MO_PCT_CHG',
     dataType: tableau.dataTypeEnum.float
