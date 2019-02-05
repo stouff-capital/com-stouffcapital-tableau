@@ -3,8 +3,8 @@
   var myConnector = tableau.makeConnector();
 
 
-  // data model
-  var dm = [{
+  // data models
+  var centralFeed_dm = [{
     id: 'ticker__given',
     alias: 'Ticker',
     dataType: tableau.dataTypeEnum.string
@@ -452,37 +452,163 @@
   }];
 
 
+  var centralStatics_dm = [{
+    id: 'ticker__given',
+    alias: 'Ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'data__datestamp',
+    alias: 'DATESTAMP',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'asset__NAME',
+    alias: 'NAME',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__ID_ISIN',
+    alias: 'ID_ISIN',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__CRNCY',
+    alias: 'asset.CRNCY',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__GICS_SECTOR_NAME',
+    alias: 'GICS_SECTOR_NAME',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__GICS_INDUSTRY_GROUP_NAME',
+    alias: 'GICS_INDUSTRY_GROUP_NAME',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__GICS_INDUSTRY_NAME',
+    alias: 'GICS_INDUSTRY_NAME',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__COUNTRY_ISO__ISOALPHA2Code',
+    alias: 'COUNTRY__ISOALPHA2Code',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__COUNTRY_ISO__name',
+    alias: 'COUNTRY_NAME',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__region__MatrixRegion',
+    alias: 'REGION',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'derived__data__capiLocalCrncy__localValueInBln',
+    alias: 'capiLocalInBln',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'derived__data__capiBaseCrncy__baseValueInBln',
+    alias: 'capiBaseInBln',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
+
+  var earningsHistory_dm = [{
+    id: 'ticker',
+    alias: 'Ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'ann_date',
+    alias: 'ann_date',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'comp',
+    alias: 'Comparable',
+    dataType: tableau.dataTypeEnum.float,
+    numberFormat: tableau.numberFormatEnum.percentage
+  }, {
+    id: 'estimate',
+    alias: 'Consensus Estimate',
+    dataType: tableau.dataTypeEnum.float,
+    numberFormat: tableau.numberFormatEnum.currency
+  }, {
+    id: 'surprise',
+    alias: 'Surprise',
+    dataType: tableau.dataTypeEnum.float,
+    numberFormat: tableau.numberFormatEnum.percentage
+  }];
+
+
 
   // Define the schema
   myConnector.getSchema = function(schemaCallback) {
-
-    var tableSchema = {
-      id: 'centraleFeed',
-      alias: 'Centrale last run',
-      columns: dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
-    };
-
-    schemaCallback([tableSchema]);
+    schemaCallback([
+      {
+        id: 'centraleFeed',
+        alias: 'Centrale last run',
+        columns: centralFeed_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      },{
+        id: 'centraleStatics',
+        alias: 'Centrale statics',
+        columns: centralStatics_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      },{
+        id: 'earningsHistory',
+        alias: 'Earnings History',
+        columns: earningsHistory_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }
+    ]);
   };
 
   // Download the data
   myConnector.getData = function(table, doneCallback) {
 
-    var connectionDataObj = tableau.connectionData ? JSON.parse(tableau.connectionData) : {host: 'tableau/data/centrale'};
+    if (table.tableInfo.id == "centraleFeed") {
+      var connectionDataObj = tableau.connectionData ? JSON.parse(tableau.connectionData) : {host: 'tableau/data/centrale'};
 
-    $.getJSON(connectionDataObj.host, function(data) {
+      $.getJSON(connectionDataObj.host, function(data) {
 
-      tableData = data.map( function(company) {
-        var company_data = {};
-        for (var field in dm) { // loop on indexes
-          company_data[ dm[field].id ] = dm[field].hasOwnProperty('src') ? company[ dm[field].src ] : company[ dm[field].id.replace(/__/g, '.') ];
-        }
-        return company_data;
-      } )
+        tableData = data.map( function(company) {
+          var company_data = {};
+          for (var field in centralFeed_dm) { // loop on indexes
+            company_data[ centralFeed_dm[field].id ] = centralFeed_dm[field].hasOwnProperty('src') ? company[ centralFeed_dm[field].src ] : company[ centralFeed_dm[field].id.replace(/__/g, '.') ];
+          }
+          return company_data;
+        } )
 
-      table.appendRows(tableData);
-      doneCallback();
-    });
+        table.appendRows(tableData);
+        doneCallback();
+
+
+      });
+    } else if (table.tableInfo.id == "centraleStatics") {
+      var connectionDataObj = tableau.connectionData ? JSON.parse(tableau.connectionData) : {host: 'tableau/data/centrale'};
+
+      $.getJSON(connectionDataObj.host, function(data) {
+
+        tableData = data.map( function(company) {
+          var company_data = {};
+          for (var field in centralStatics_dm) { // loop on indexes
+            company_data[ centralStatics_dm[field].id ] = centralStatics_dm[field].hasOwnProperty('src') ? company[ centralStatics_dm[field].src ] : company[ centralStatics_dm[field].id.replace(/__/g, '.') ];
+          }
+          return company_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "earningsHistory") {
+
+      $.getJSON('/tableau/data/earningshistory', function(data) {
+
+        tableData = data.map( function(company_date) {
+          var company_date_data = {};
+          for (var field in earningsHistory_dm) { // loop on indexes
+            company_date_data[ earningsHistory_dm[field].id ] = earningsHistory_dm[field].hasOwnProperty('src') ? company_date[ earningsHistory_dm[field].src ] : company_date[ earningsHistory_dm[field].id.replace(/__/g, '.') ];
+          }
+          return company_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    }
+
   };
 
   tableau.registerConnector(myConnector);
