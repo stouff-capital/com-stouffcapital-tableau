@@ -22,6 +22,7 @@ FILENAME_TABLEAU = 'tableau.csv'
 FILENAME_XLS = 'xls.json'
 FILENAME_SURP = 'surp.json'
 FILENAME_EARNINGS_HISTORY = 'earningsHistory.json'
+FILENAME_VIX_FUTURE_HISTORY = 'cboeFuturesVix.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -353,7 +354,7 @@ def tableau_data_earningsHistroy_upload():
     return jsonify( {
         'status': 'ok',
         'submittedDatetime': datetime.datetime.now().isoformat(),
-        'companies': len(df),
+        'data': len(df),
     } )
 
 
@@ -370,6 +371,36 @@ def tableau_data_earningsHistroy():
     df = df.where((pd.notnull(df)), None)
 
     return jsonify( df.to_dict(orient='records') )
+
+
+@app.route('/tableau/data/cboefuturesvix/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_cboeFuturesVix_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_VIX_FUTURE_HISTORY}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/cboefuturesvix', methods=['GET'])
+def tableau_data_cboeFuturesVix():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_VIX_FUTURE_HISTORY}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_VIX_FUTURE_HISTORY}', orient="records" )
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
 
 
 @app.route('/tableau/data/ib/eod/transactions')

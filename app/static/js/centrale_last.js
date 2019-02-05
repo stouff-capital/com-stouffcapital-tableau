@@ -532,6 +532,65 @@
     numberFormat: tableau.numberFormatEnum.percentage
   }];
 
+  var cboeFuturesVix_dm = [{
+    id: 'name',
+    alias: 'name',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'Futures',
+    alias: 'Futures',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'url',
+    alias: 'url',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'expiry',
+    alias: 'expiry',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'Trade_Date',
+    alias: 'Trade_Date',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'Open',
+    alias: 'Open',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'High',
+    alias: 'High',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'Low',
+    alias: 'Low',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'Close',
+    alias: 'Close',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'Settle',
+    alias: 'Settle',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'Change',
+    alias: 'Change',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'Total_Volume',
+    alias: 'Total_Volume',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'EFP',
+    alias: 'EFP',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'Open_Interest',
+    alias: 'Open_Interest',
+    dataType: tableau.dataTypeEnum.int
+  }];
+
+
 
 
   // Define the schema
@@ -541,14 +600,18 @@
         id: 'centraleFeed',
         alias: 'Centrale last run',
         columns: centralFeed_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
-      },{
+      }, {
         id: 'centraleStatics',
         alias: 'Centrale statics',
         columns: centralStatics_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
-      },{
+      }, {
         id: 'earningsHistory',
         alias: 'Earnings History',
         columns: earningsHistory_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'cboeFuturesVix',
+        alias: 'CBOE VIX Futures History',
+        columns: cboeFuturesVix_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -601,6 +664,22 @@
             company_date_data[ earningsHistory_dm[field].id ] = earningsHistory_dm[field].hasOwnProperty('src') ? company_date[ earningsHistory_dm[field].src ] : company_date[ earningsHistory_dm[field].id.replace(/__/g, '.') ];
           }
           return company_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "cboeFuturesVix") {
+
+      $.getJSON('/tableau/data/cboefuturesvix', function(data) {
+
+        tableData = data.map( function(future_date) {
+          var future_date_data = {};
+          for (var field in cboeFuturesVix_dm) { // loop on indexes
+            future_date_data[ cboeFuturesVix_dm[field].id ] = cboeFuturesVix_dm[field].hasOwnProperty('src') ? future_date[ cboeFuturesVix_dm[field].src ] : future_date[ cboeFuturesVix_dm[field].id.replace(/__/g, '.') ];
+          }
+          return future_date_data;
         } )
 
         table.appendRows(tableData);
