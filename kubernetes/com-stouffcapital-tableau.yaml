@@ -21,14 +21,14 @@ metadata:
     app: com-stouffcapital-tableau
 spec:
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app: com-stouffcapital-tableau
     spec:
       containers:
-      - image: stouffcapital/com-stouffcapital-tableau:84d2eae
+      - image: stouffcapital/com-stouffcapital-tableau
         name: com-stouffcapital-tableau
         env:
         - name: APP_SECRET

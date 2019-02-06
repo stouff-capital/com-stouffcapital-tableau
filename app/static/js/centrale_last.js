@@ -602,7 +602,7 @@
   }, {
     id: 'contract_conid',
     alias: 'contract_conid',
-    dataType: tableau.dataTypeEnum.string
+    dataType: tableau.dataTypeEnum.int
   }, {
     id: 'contract_symbol',
     alias: 'contract_symbol',
@@ -623,6 +623,113 @@
     id: 'exposureType',
     alias: 'exposureType',
     dataType: tableau.dataTypeEnum.string
+  }];
+
+
+  var ibPnl_dm = [{
+    id: 'accountId',
+    alias: 'accountId',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'reportDate',
+    alias: 'reportDate',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'assetCategory',
+    alias: 'assetCategory',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'conid',
+    alias: 'conid',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'symbol',
+    alias: 'symbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'description',
+    alias: 'description',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'putCall',
+    alias: 'putCall',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'strike',
+    alias: 'strike',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'expiry',
+    alias: 'expiry',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'listingExchange',
+    alias: 'listingExchange',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'isin',
+    alias: 'isin',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'multiplier',
+    alias: 'multiplier',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'principalAdjustFactor',
+    alias: 'principalAdjustFactor',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'underlyingConid',
+    alias: 'underlyingConid',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'underlyingSymbol',
+    alias: 'underlyingSymbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingSecurityID',
+    alias: 'underlyingSecurityID',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingListingExchange',
+    alias: 'underlyingListingExchange',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'closeQuantity',
+    alias: 'closeQuantity',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'closePrice',
+    alias: 'closePrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'commissions',
+    alias: 'commissions',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'other',
+    alias: 'other',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'prevCloseQuantity',
+    alias: 'prevCloseQuantity',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'prevClosePrice',
+    alias: 'prevClosePrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'priorOpenMtm',
+    alias: 'priorOpenMtm',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'transactionMtm',
+    alias: 'transactionMtm',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'total',
+    alias: 'total',
+    dataType: tableau.dataTypeEnum.float
   }];
 
 
@@ -651,6 +758,10 @@
         id: 'ibSymbology',
         alias: 'Bridge IB-BBG',
         columns: ibsymbology_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'ibPnl',
+        alias: 'IB PnL',
+        columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -735,6 +846,22 @@
             contract_data[ ibsymbology_dm[field].id ] = ibsymbology_dm[field].hasOwnProperty('src') ? contract[ ibsymbology_dm[field].src ] : contract[ ibsymbology_dm[field].id.replace(/__/g, '.') ];
           }
           return contract_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibPnl") {
+
+      $.getJSON('/tableau/data/ibpnl', function(data) {
+
+        tableData = data.map( function(pnl_date) {
+          var pnl_date_data = {};
+          for (var field in ibPnl_dm) { // loop on indexes
+            pnl_date_data[ ibPnl_dm[field].id ] = ibPnl_dm[field].hasOwnProperty('src') ? pnl_date[ ibPnl_dm[field].src ] : pnl_date[ ibPnl_dm[field].id.replace(/__/g, '.') ];
+          }
+          return pnl_date_data;
         } )
 
         table.appendRows(tableData);
