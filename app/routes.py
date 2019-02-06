@@ -309,6 +309,272 @@ def tableau_data_centrale():
     return jsonify( df[0:5].to_dict(orient='records') )
 
 
+def ibsymbology_manual():
+    return [
+    {
+        'ticker.given': 'BTC1 CURNCY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'BITCOIN',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'COMMODITY'
+    }, {
+        'ticker.given': 'CL1 COMDTY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'CRUDE OIL',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'COMMODITY'
+    }, {
+        'ticker.given': 'HG1 COMDTY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'COPPER',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'COMMODITY'
+    }, {
+        'ticker.given': 'RX1 COMDTY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'EURO BUND',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'BOND'
+    }, {
+        'ticker.given': 'TY1 COMDTY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'US TREASURY',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'BOND'
+    }, {
+        'ticker.given': 'CAC INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'CAC 40 INDEX',
+        'asset.CRNCY': 'EUR',
+        'asset.region.MatrixRegion': 'Europe',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'DAX INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'DAX INDEX',
+        'asset.CRNCY': 'EUR',
+        'asset.region.MatrixRegion': 'Europe',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'HSCEI INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'HANG SENG CHINA ENT INDX',
+        'asset.CRNCY': 'HKD',
+        'asset.region.MatrixRegion': 'Emerging',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'NDX INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'NASDAQ 100 STOCK INDX',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'NKY INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'NIKKEI 225',
+        'asset.CRNCY': 'JPY',
+        'asset.region.MatrixRegion': 'Japan',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'RTY INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'RUSSEL 2000 INDEX',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'SMI INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'SWISS MARKET INDEX',
+        'asset.CRNCY': 'CHF',
+        'asset.region.MatrixRegion': 'Europe',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'SPX INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'S&P 500 INDEX',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'SX5E INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'Euro Stoxx 50 Pr',
+        'asset.CRNCY': 'EUR',
+        'asset.region.MatrixRegion': 'Europe',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'EEM US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'ISHARES MSCI EMERGING MARKET',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'Emerging',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'EIDO US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'ISHARES MSCI INDONESIA ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'Emerging',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'EWW US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'ISHARES MSCI MEXICO ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'Emerging',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'FXI US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'ISHARES CHINA LARGE-CAP ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'Emerging',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'INDA US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'ISHARES MSCI INDIA ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'Emerging',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'TUR US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'ISHARES MSCI TURKEY ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'Emerging',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'GDX US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Materials',
+        'asset.NAME': 'VANECK VECTORS GOLD MINERS ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'SMH US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Information Technology',
+        'asset.NAME': 'VANECK VECTORS SEMICONDUCTOR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'IBB US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Health Care',
+        'asset.NAME': 'ISHARES NASDAQ BIOTECHNOLOGY',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XHB US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Consumer Discretionary',
+        'asset.NAME': 'SPDR S&P HOMEBUILDERS ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XLB US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Materials',
+        'asset.NAME': 'MATERIALS SELECT SECTOR SPDR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XLE US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Energy',
+        'asset.NAME': 'ENERGY SELECT SECTOR SPDR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XLF US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Financials',
+        'asset.NAME': 'FINANCIAL SELECT SECTOR SPDR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XLI US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Industrials',
+        'asset.NAME': 'INDUSTRIAL SELECT SECT SPDR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XLP US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Consumer Staples',
+        'asset.NAME': 'CONSUMER STAPLES SPDR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XLU US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Utilities',
+        'asset.NAME': 'UTILITIES SELECT SECTOR SPDR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XLV US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Health Care',
+        'asset.NAME': 'HEALTH CARE SELECT SECTOR',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'XME US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Materials',
+        'asset.NAME': 'SPDR S&P METALS & MINING ETF',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }
+    ]
+
+
+
+@app.route('/tableau/data/statics')
+def tableau_data_statics():
+    #df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
+    #df = prepare_dataset()
+
+    df_manual = pd.DataFrame(
+        [{
+            'ticker.given': asset['ticker.given'] if 'ticker.given' in asset else None,
+            'data.datestamp': datetime.datetime.now().strftime('%Y-%m-%d'),
+            'asset.NAME':  asset['asset.NAME'] if 'asset.NAME' in asset else None,
+#            'asset.ID_ISIN': asset['asset.ID_ISIN'] if 'asset.ID_ISIN' in asset else None,
+            'asset.CRNCY':  asset['asset.CRNCY'] if 'asset.CRNCY' in asset else None,
+            'asset.GICS_SECTOR_NAME':  asset['asset.GICS_SECTOR_NAME'] if 'asset.GICS_SECTOR_NAME' in asset else None,
+#            'asset.GICS_INDUSTRY_GROUP_NAME':  asset['asset.GICS_INDUSTRY_GROUP_NAME'] if 'asset.GICS_INDUSTRY_GROUP_NAME' in asset else None,
+#            'asset.GICS_INDUSTRY_NAME':  asset['asset.GICS_INDUSTRY_NAME'] if 'asset.GICS_INDUSTRY_NAME' in asset else None,
+#            'asset.COUNTRY_ISO.ISOALPHA2Code':  asset['asset.COUNTRY_ISO.ISOALPHA2Code'] if 'asset.COUNTRY_ISO.ISOALPHA2Code' in asset else None,
+#            'asset.COUNTRY_ISO.name':  asset['asset.COUNTRY_ISO.name'] if 'asset.COUNTRY_ISO.name' in asset else None,
+            'asset.region.MatrixRegion':  asset['asset.region.MatrixRegion'] if 'asset.region.MatrixRegion' in asset else None,
+#            'derived.data.capiLocalCrncy.localValueInBln':  asset['derived.data.capiLocalCrncy.localValueInBln'] if 'derived.data.capiLocalCrncy.localValueInBln' in asset else None,
+#            'derived.data.capiLocalCrncy.baseValueInBln':  asset['derived.data.capiLocalCrncy.baseValueInBln'] if 'derived.data.capiLocalCrncy.baseValueInBln' in asset else None,
+        }
+         for asset
+         in ibsymbology_manual()]
+    )
+
+    df = pd.concat([prepare_dataset(), df_manual], sort=False)
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+    return jsonify( df[0:5].to_dict(orient='records') )
+
+
+
 @app.route('/tableau/data/xls/upload', methods=['POST'])
 @basic_auth.required
 def tableau_data_xls_uppload():
@@ -464,6 +730,26 @@ def tableau_data_ibsymbology():
 
     else:
         df = pd.DataFrame([])
+
+    # patch manual symbology for exposureType
+    dict_underlying_exposureType = {}
+    list_manual_underlyings = ibsymbology_manual()
+
+    for underlying in list_manual_underlyings:
+        dict_underlying_exposureType[underlying["ticker.given"]] = underlying["exposureType"]
+
+    list_assets = df.to_dict(orient='records')
+    list_patched_asset = []
+
+    for asset in list_assets:
+        if asset['ticker'] in dict_underlying_exposureType:
+            asset['exposureType'] = dict_underlying_exposureType[ asset['ticker'] ]
+
+        list_patched_asset.append(asset)
+
+    df = pd.DataFrame(list_patched_asset)
+
+
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)

@@ -788,9 +788,8 @@
 
       });
     } else if (table.tableInfo.id == "centraleStatics") {
-      var connectionDataObj = tableau.connectionData ? JSON.parse(tableau.connectionData) : {host: 'tableau/data/centrale'};
-
-      $.getJSON(connectionDataObj.host, function(data) {
+      
+      $.getJSON('/tableau/data/statics', function(data) {
 
         tableData = data.map( function(company) {
           var company_data = {};
