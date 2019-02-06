@@ -410,6 +410,20 @@ def ibsymbology_manual():
         'asset.region.MatrixRegion': 'Europe',
         'exposureType': 'EQUITY'
     }, {
+        'ticker.given': 'SX5ED INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'EURO STOXX 50 DVP VP',
+        'asset.CRNCY': 'EUR',
+        'asset.region.MatrixRegion': 'Europe',
+        'exposureType': 'DIVIDEND'
+    }, {
+        'ticker.given': 'VIX INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'CBOE SPX VOLATILITY INDX',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'VOLATILITY'
+    }, {
         'ticker.given': 'EEM US EQUITY',
         'asset.GICS_SECTOR_NAME': 'INDEX',
         'asset.NAME': 'ISHARES MSCI EMERGING MARKET',
@@ -565,6 +579,9 @@ def tableau_data_statics():
          in ibsymbology_manual()]
     )
 
+    # get statics from open positions not in universe
+
+
     df = pd.concat([prepare_dataset(), df_manual], sort=False)
 
     #patch missing values
@@ -697,9 +714,14 @@ def tableau_data_ibsymbology_upload():
                         break
                 for key in asset:
                     if asset[key] != None:
-                        if list_current[list_current_idx_toEdit][key]  != asset[key]:
+
+                        if key not in list_current[list_current_idx_toEdit]:
                             list_current[list_current_idx_toEdit][key] = asset[key]
                             count_updates += 1
+                        else:
+                            if list_current[list_current_idx_toEdit][key]  != asset[key]:
+                                list_current[list_current_idx_toEdit][key] = asset[key]
+                                count_updates += 1
 
 
         df_current = pd.DataFrame(list_current)
