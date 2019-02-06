@@ -722,6 +722,27 @@ def tableau_data_ibsymbology_upload():
     } )
 
 
+def patch_ticker_marketplace(ticker):
+    mps = {
+        "GY": "GR",
+        "JT": "JP",
+        "UN": "US",
+        "UQ": "US",
+        "UW": "US",
+        "UR": "US",
+        "UF": "US",
+        "SQ": "SM",
+        "SE": "SW",
+    }
+
+    ticker = ticker.upper()
+
+    for mp in mps:
+        ticker = ticker.replace(f' {mp} EQUITY',  f' {mps[mp]} EQUITY')
+
+    return ticker
+
+
 @app.route('/tableau/data/ibsymbology', methods=['GET'])
 def tableau_data_ibsymbology():
 
@@ -742,8 +763,11 @@ def tableau_data_ibsymbology():
     list_patched_asset = []
 
     for asset in list_assets:
-        if asset['ticker'] in dict_underlying_exposureType:
-            asset['exposureType'] = dict_underlying_exposureType[ asset['ticker'] ]
+
+        asset["underlyingBloombergTicker"] = patch_ticker_marketplace(asset["underlyingBloombergTicker"])
+
+        if asset['underlyingBloombergTicker'] in dict_underlying_exposureType:
+            asset['exposureType'] = dict_underlying_exposureType[ asset['underlyingBloombergTicker'] ]
 
         list_patched_asset.append(asset)
 
