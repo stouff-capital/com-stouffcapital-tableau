@@ -591,6 +591,41 @@
   }];
 
 
+  var ibsymbology_dm = [{
+    id: 'bbgIdentifier',
+    alias: 'bbgIdentifier',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'bbgUnderylingId',
+    alias: 'bbgUnderylingId',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'contract_conid',
+    alias: 'contract_conid',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'contract_symbol',
+    alias: 'contract_symbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'internalUnderlying',
+    alias: 'internalUnderlying',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'ticker',
+    alias: 'ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingBloombergTicker',
+    alias: 'underlyingBloombergTicker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'exposureType',
+    alias: 'exposureType',
+    dataType: tableau.dataTypeEnum.string
+  }];
+
+
 
 
   // Define the schema
@@ -612,6 +647,10 @@
         id: 'cboeFuturesVix',
         alias: 'CBOE VIX Futures History',
         columns: cboeFuturesVix_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'ibSymbology',
+        alias: 'Bridge IB-BBG',
+        columns: ibsymbology_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -680,6 +719,22 @@
             future_date_data[ cboeFuturesVix_dm[field].id ] = cboeFuturesVix_dm[field].hasOwnProperty('src') ? future_date[ cboeFuturesVix_dm[field].src ] : future_date[ cboeFuturesVix_dm[field].id.replace(/__/g, '.') ];
           }
           return future_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibSymbology") {
+
+      $.getJSON('/tableau/data/ibsymbology', function(data) {
+
+        tableData = data.map( function(contract) {
+          var contract_data = {};
+          for (var field in ibsymbology_dm) { // loop on indexes
+            contract_data[ ibsymbology_dm[field].id ] = ibsymbology_dm[field].hasOwnProperty('src') ? contract[ ibsymbology_dm[field].src ] : contract[ ibsymbology_dm[field].id.replace(/__/g, '.') ];
+          }
+          return contract_data;
         } )
 
         table.appendRows(tableData);

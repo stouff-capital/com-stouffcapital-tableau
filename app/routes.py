@@ -23,6 +23,7 @@ FILENAME_XLS = 'xls.json'
 FILENAME_SURP = 'surp.json'
 FILENAME_EARNINGS_HISTORY = 'earningsHistory.json'
 FILENAME_VIX_FUTURE_HISTORY = 'cboeFuturesVix.json'
+FILENAME_IB_SYMBOLOGY = 'ibsymbology.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -401,6 +402,72 @@ def tableau_data_cboeFuturesVix():
 
     return jsonify( df.to_dict(orient='records') )
 
+
+
+@app.route('/tableau/data/ibsymbology/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_ibsymbology_upload():
+    df_rcv = pd.DataFrame( request.get_json()['data'] )
+
+    count_assets = 0
+    count_new = 0
+    count_updates = 0
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}' ):
+        df_current = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}', orient="records" )
+
+        list_rcv = df_rcv.to_dict(orient='records')
+        list_current = df_current.to_dict(orient='records')
+
+        for asset in list_rcv:
+            if asset['contract_conid'] not in list(df_current['contract_conid'].values):
+                list_current.append(asset)
+                count_new += 1
+            else:
+                for idx, c_asset in enumerate(list_current):
+                    if c_asset['contract_conid'] == asset['contract_conid']:
+                        # edit the list
+                        list_current_idx_toEdit = idx
+                        break
+                for key in asset:
+                    if asset[key] != None:
+                        if list_current[list_current_idx_toEdit][key]  != asset[key]:
+                            list_current[list_current_idx_toEdit][key] = asset[key]
+                            count_updates += 1
+
+
+        df_current = pd.DataFrame(list_current)
+
+        df_current.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}', orient='records' )
+        count_assets = len(df_current)
+
+    else:
+        df_rcv.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}', orient='records' )
+        count_assets = len(df_rcv)
+        count_new = len(df_rcv)
+
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': count_assets,
+        'new': count_new,
+        'updates': count_updates,
+    } )
+
+
+@app.route('/tableau/data/ibsymbology', methods=['GET'])
+def tableau_data_ibsymbology():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}', orient="records" )
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
 
 
 @app.route('/tableau/data/ib/eod/transactions')
