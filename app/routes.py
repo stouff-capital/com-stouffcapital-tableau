@@ -579,10 +579,37 @@ def tableau_data_statics():
          in ibsymbology_manual()]
     )
 
-    # get statics from open positions not in universe
-
-
     df = pd.concat([prepare_dataset(), df_manual], sort=False)
+
+
+    # get statics from open positions not in universe
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}' ):
+        df_symbology = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_SYMBOLOGY}', orient="records" )
+
+        list_openPosNotInUniverse = []
+        for asset in df_symbology.to_dict(orient='records'):
+
+            if " EQUITY" in asset["underlyingBloombergTicker"]:
+                asset["underlyingBloombergTicker"] = patch_ticker_marketplace(asset["underlyingBloombergTicker"])
+                if asset["underlyingBloombergTicker"] not in list(df["ticker.given"].values):
+                    list_openPosNotInUniverse.append(
+                        {
+                            'ticker.given': asset['underlyingBloombergTicker'],
+                            'data.datestamp': datetime.datetime.now().strftime('%Y-%m-%d'),
+                            'asset.NAME':  asset['underlyingBloombergTicker'],
+                            'asset.CRNCY':  None,
+                            'asset.GICS_SECTOR_NAME':  asset['GICS_SECTOR_NAME'] if asset['GICS_SECTOR_NAME'][0] != '#' else None,
+                            'asset.GICS_INDUSTRY_GROUP_NAME':  asset['GICS_INDUSTRY_GROUP_NAME'] if asset['GICS_INDUSTRY_GROUP_NAME'][0] != '#' else None,
+                            'asset.GICS_INDUSTRY_NAME':  asset['GICS_INDUSTRY_NAME'] if asset['GICS_INDUSTRY_NAME'][0] != '#' else None,
+                            'asset.region.MatrixRegion':  asset['asset.region.MatrixRegion'] if asset['asset.region.MatrixRegion'][0] != '#' else None,
+                        }
+                    )
+
+        df_openPosNotInUniverse = pd.DataFrame(list_openPosNotInUniverse)
+        df = pd.concat([df, df_openPosNotInUniverse], sort=False)
+
+
+
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
