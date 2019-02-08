@@ -820,6 +820,117 @@
   }];
 
 
+  var ibPosition_dm = [{
+    id: 'accountId',
+    alias: 'accountId',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'reportDate',
+    alias: 'reportDate',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'assetCategory',
+    alias: 'assetCategory',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'conid',
+    alias: 'conid',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'symbol',
+    alias: 'symbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'description',
+    alias: 'description',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'currency',
+    alias: 'currency',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'putCall',
+    alias: 'putCall',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'strike',
+    alias: 'strike',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'expiry',
+    alias: 'expiry',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'listingExchange',
+    alias: 'listingExchange',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'isin',
+    alias: 'isin',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'multiplier',
+    alias: 'multiplier',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'underlyingConid',
+    alias: 'underlyingConid',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'underlyingSymbol',
+    alias: 'underlyingSymbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingSecurityID',
+    alias: 'underlyingSecurityID',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingListingExchange',
+    alias: 'underlyingListingExchange',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'side',
+    alias: 'side',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'position',
+    alias: 'position',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'positionValue',
+    alias: 'positionValue',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'markPrice',
+    alias: 'markPrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'percentOfNAV',
+    alias: 'percentOfNAV',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'fxRateToBase',
+    alias: 'fxRateToBase',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'openPrice',
+    alias: 'openPrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'costBasisPrice',
+    alias: 'costBasisPrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'costBasisMoney',
+    alias: 'costBasisMoney',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'fifoPnlUnrealized',
+    alias: 'fifoPnlUnrealized',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
+
 
 
   // Define the schema
@@ -853,6 +964,10 @@
         id: 'ibPnl',
         alias: 'IB PnL',
         columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'ibPosition',
+        alias: 'IB Open Positions',
+        columns: ibPosition_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -968,6 +1083,22 @@
             pnl_date_data[ ibPnl_dm[field].id ] = ibPnl_dm[field].hasOwnProperty('src') ? pnl_date[ ibPnl_dm[field].src ] : pnl_date[ ibPnl_dm[field].id.replace(/__/g, '.') ];
           }
           return pnl_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibPosition") {
+
+      $.getJSON('/tableau/data/ibposition', function(data) {
+
+        tableData = data.map( function(position_date) {
+          var position_date_data = {};
+          for (var field in ibPosition_dm) { // loop on indexes
+            position_date_data[ ibPosition_dm[field].id ] = ibPosition_dm[field].hasOwnProperty('src') ? position_date[ ibPosition_dm[field].src ] : position_date[ ibPosition_dm[field].id.replace(/__/g, '.') ];
+          }
+          return position_date_data;
         } )
 
         table.appendRows(tableData);
