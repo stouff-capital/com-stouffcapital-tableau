@@ -25,6 +25,7 @@ FILENAME_EARNINGS_HISTORY = 'earningsHistory.json'
 FILENAME_VIX_FUTURE_HISTORY = 'cboeFuturesVix.json'
 FILENAME_IB_SYMBOLOGY = 'ibsymbology.json'
 FILENAME_IB_PNL = 'ib_pnl.json'
+FILENAME_IB_NAV = 'ib_nav.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -858,6 +859,35 @@ def tableau_data_ibPnl():
 
     return jsonify( df.to_dict(orient='records') )
 
+
+
+@app.route('/tableau/data/ibnav/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_ibnav_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_IB_NAV}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/ibnav', methods=['GET'])
+def tableau_data_ibnav():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_NAV}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_NAV}', orient="records" )
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
 
 
 @app.route('/tableau/data/ib/eod/transactions')

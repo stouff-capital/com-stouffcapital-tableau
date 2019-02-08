@@ -626,6 +626,93 @@
   }];
 
 
+  var ibnav_dm = [{
+    id: 'reportDate',
+    alias: 'reportDate',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'cash',
+    alias: 'cash',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'brokerCashComponent',
+    alias: 'brokerCashComponent',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'fdicInsuredBankSweepAccountCashComponent',
+    alias: 'fdicInsuredBankSweepAccountCashComponent',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'slbCashCollateral',
+    alias: 'slbCashCollateral',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'stock',
+    alias: 'stock',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'slbDirectSecuritiesBorrowed',
+    alias: 'slbDirectSecuritiesBorrowed',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'slbDirectSecuritiesLent',
+    alias: 'slbDirectSecuritiesLent',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'options',
+    alias: 'options',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'bonds',
+    alias: 'bonds',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'commodities',
+    alias: 'commodities',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'notes',
+    alias: 'notes',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'funds',
+    alias: 'funds',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'dividendAccruals',
+    alias: 'dividendAccruals',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'interestAccruals',
+    alias: 'interestAccruals',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'brokerInterestAccrualsComponent',
+    alias: 'brokerInterestAccrualsComponent',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'fdicInsuredAccountInterestAccrualsComponent',
+    alias: 'fdicInsuredAccountInterestAccrualsComponent',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'softDollars',
+    alias: 'softDollars',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'forexCfdUnrealizedPl',
+    alias: 'forexCfdUnrealizedPl',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'cfdUnrealizedPl',
+    alias: 'cfdUnrealizedPl',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'total',
+    alias: 'total',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
+
   var ibPnl_dm = [{
     id: 'accountId',
     alias: 'accountId',
@@ -759,6 +846,10 @@
         alias: 'Bridge IB-BBG',
         columns: ibsymbology_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }, {
+        id: 'ibNav',
+        alias: 'IB NAV',
+        columns: ibnav_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
         id: 'ibPnl',
         alias: 'IB PnL',
         columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
@@ -788,7 +879,7 @@
 
       });
     } else if (table.tableInfo.id == "centraleStatics") {
-      
+
       $.getJSON('/tableau/data/statics', function(data) {
 
         tableData = data.map( function(company) {
@@ -845,6 +936,22 @@
             contract_data[ ibsymbology_dm[field].id ] = ibsymbology_dm[field].hasOwnProperty('src') ? contract[ ibsymbology_dm[field].src ] : contract[ ibsymbology_dm[field].id.replace(/__/g, '.') ];
           }
           return contract_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibNav") {
+
+      $.getJSON('/tableau/data/ibnav', function(data) {
+
+        tableData = data.map( function(nav_date) {
+          var nav_date_data = {};
+          for (var field in ibnav_dm) { // loop on indexes
+            nav_date_data[ ibnav_dm[field].id ] = ibnav_dm[field].hasOwnProperty('src') ? nav_date[ ibnav_dm[field].src ] : nav_date[ ibnav_dm[field].id.replace(/__/g, '.') ];
+          }
+          return nav_date_data;
         } )
 
         table.appendRows(tableData);
