@@ -452,6 +452,147 @@
   }];
 
 
+  var centralHisto_dm = [{
+    id: 'ticker__given',
+    alias: 'Ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'data__datestamp',
+    alias: 'DATESTAMP',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'asset__NAME',
+    alias: 'NAME',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__CRNCY',
+    alias: 'asset.CRNCY',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__GICS_SECTOR_NAME',
+    alias: 'GICS_SECTOR_NAME',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__COUNTRY_ISO__ISOALPHA2Code',
+    alias: 'COUNTRY__ISOALPHA2Code',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset__region__MatrixRegion',
+    alias: 'REGION',
+    dataType: tableau.dataTypeEnum.string
+  }/*, {
+    id: 'models__GROWTH__CURRENT_EPSMthChg',
+    src: 'models.GROWTH.components.CURRENT_EPSMthChg.intermediary_score',
+    alias: 'GROWTH__CURRENT_EPSMthChg',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__PAST_EPSStability',
+    src: 'models.GROWTH.components.PAST_EPSStability.intermediary_score',
+    alias: 'GROWTH__PAST_EPSStability',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__CURRENT_BEstEPS4WeekChangeNextYear',
+    src: 'models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.intermediary_score',
+    alias: 'GROWTH__CURRENT_BEstEPS4WeekChangeNextYear',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__PAST_EPSGrowthYr',
+    src: 'models.GROWTH.components.PAST_EPSGrowthYr.intermediary_score',
+    alias: 'GROWTH__PAST_EPSGrowthYr',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__CURRENT_BEstEPS4WeekChangeCurrentYear',
+    src: 'models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.intermediary_score',
+    alias: 'GROWTH__CURRENT_BEstEPS4WeekChangeCurrentYear',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__NEXT_EPSGrowth',
+    src: 'models.GROWTH.components.NEXT_EPSGrowth.intermediary_score',
+    alias: 'GROWTH__NEXT_EPSGrowth',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__CURRENT_RatioEPSCurrentYearLastEPS',
+    src: 'models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.intermediary_score',
+    alias: 'GROWTH__CURRENT_RatioEPSCurrentYearLastEPS',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__CURRENT_EPSSurprise',
+    src: 'models.GROWTH.components.CURRENT_EPSSurprise.intermediary_score',
+    alias: 'GROWTH__CURRENT_EPSSurprise',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__CURRENT_RatioEPSNextYrCurrentYr',
+    src: 'models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.intermediary_score',
+    alias: 'GROWTH__CURRENT_RatioEPSNextYrCurrentYr',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__scoring__final_score',
+    alias: 'GROWTH',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'models__GROWTH__scoring_pct_not_cover',
+    src: 'models.GROWTH.scoring.pct_not_cover',
+    alias: ' GROWTH scoring pct not_cover',
+    dataType: tableau.dataTypeEnum.float
+  }*/];
+
+  var model_GROWTH_components = [
+    'CURRENT_BEstEPS4WeekChangeCurrentYear',
+    'CURRENT_BEstEPS4WeekChangeNextYear',
+    'CURRENT_EPSMthChg',
+    'CURRENT_EPSSurprise',
+    'CURRENT_RatioEPSCurrentYearLastEPS',
+    'CURRENT_RatioEPSNextYrCurrentYr',
+    'NEXT_EPSGrowth',
+    'PAST_EPSGrowthYr',
+    'PAST_EPSStability'
+  ]
+
+
+  for (var indx in model_GROWTH_components) { // loop on indexes
+
+    var c_headers = [
+      {field: 'eval', type: tableau.dataTypeEnum.string, alias: 'GROWTH ' + model_GROWTH_components[indx] + ' eval'},
+      {field: 'error', type: tableau.dataTypeEnum.string, alias: 'GROWTH ' + model_GROWTH_components[indx] + ' error'},
+      {field: 'intermediary_score', type: tableau.dataTypeEnum.int, alias: 'GROWTH ' + model_GROWTH_components[indx]}
+    ];
+
+    for (var h_indx in c_headers) {
+      centralHisto_dm.push( {
+        id: 'models__GROWTH__components__' + model_GROWTH_components[indx] + '__' + c_headers[h_indx].field,
+        src: 'models.GROWTH.components.' + model_GROWTH_components[indx] + '.' + c_headers[h_indx].field,
+        alias: c_headers[h_indx].alias,
+        dataType: c_headers[h_indx].type
+      } );
+    }
+
+
+    centralHisto_dm.push( {
+      id: 'models__GROWTH__components__' + model_GROWTH_components[indx] + '__weight',
+      src: 'models.GROWTH.scoring.weights.' + model_GROWTH_components[indx],
+      alias: 'GROWTH ' + model_GROWTH_components[indx] + ' weight',
+      dataType: tableau.dataTypeEnum.float
+    } );
+
+  }
+
+
+  centralHisto_dm.push({
+    id: 'models__GROWTH__scoring__final_score',
+    alias: 'GROWTH',
+    dataType: tableau.dataTypeEnum.int
+  });
+
+  centralHisto_dm.push({
+    id: 'models__GROWTH__scoring_pct_not_cover',
+    src: 'models.GROWTH.scoring.pct_not_cover',
+    alias: ' GROWTH scoring pct not_cover',
+    dataType: tableau.dataTypeEnum.float
+  });
+
+
+
+
   var centralStatics_dm = [{
     id: 'ticker__given',
     alias: 'Ticker',
@@ -941,6 +1082,10 @@
         alias: 'Centrale last run',
         columns: centralFeed_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }, {
+        id: 'centraleHisto',
+        alias: 'Centrale histo',
+        columns: centralHisto_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
         id: 'centraleStatics',
         alias: 'Centrale statics',
         columns: centralStatics_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
@@ -965,8 +1110,16 @@
         alias: 'IB PnL',
         columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }, {
+        id: 'ibPnlLast',
+        alias: 'IB PnL Last',
+        columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
         id: 'ibPosition',
         alias: 'IB Open Positions',
+        columns: ibPosition_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'ibPositionLast',
+        alias: 'IB Open Positions Last',
         columns: ibPosition_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
@@ -986,6 +1139,23 @@
             company_data[ centralFeed_dm[field].id ] = centralFeed_dm[field].hasOwnProperty('src') ? company[ centralFeed_dm[field].src ] : company[ centralFeed_dm[field].id.replace(/__/g, '.') ];
           }
           return company_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+
+      });
+    } else if (table.tableInfo.id == "centraleHisto") {
+
+      $.getJSON('/tableau/data/centrale/histo', function(data) {
+
+        tableData = data.map( function(company_date) {
+          var company_date_data = {};
+          for (var field in centralHisto_dm) { // loop on indexes
+            company_date_data[ centralHisto_dm[field].id ] = centralHisto_dm[field].hasOwnProperty('src') ? company_date[ centralHisto_dm[field].src ] : company_date[ centralHisto_dm[field].id.replace(/__/g, '.') ];
+          }
+          return company_date_data;
         } )
 
         table.appendRows(tableData);
@@ -1089,9 +1259,41 @@
         doneCallback();
 
       });
+    } else if (table.tableInfo.id == "ibPnlLast") {
+
+      $.getJSON('/tableau/data/ibpnl/last', function(data) {
+
+        tableData = data.map( function(pnl_date) {
+          var pnl_date_data = {};
+          for (var field in ibPnl_dm) { // loop on indexes
+            pnl_date_data[ ibPnl_dm[field].id ] = ibPnl_dm[field].hasOwnProperty('src') ? pnl_date[ ibPnl_dm[field].src ] : pnl_date[ ibPnl_dm[field].id.replace(/__/g, '.') ];
+          }
+          return pnl_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
     } else if (table.tableInfo.id == "ibPosition") {
 
       $.getJSON('/tableau/data/ibposition', function(data) {
+
+        tableData = data.map( function(position_date) {
+          var position_date_data = {};
+          for (var field in ibPosition_dm) { // loop on indexes
+            position_date_data[ ibPosition_dm[field].id ] = ibPosition_dm[field].hasOwnProperty('src') ? position_date[ ibPosition_dm[field].src ] : position_date[ ibPosition_dm[field].id.replace(/__/g, '.') ];
+          }
+          return position_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibPositionLast") {
+
+      $.getJSON('/tableau/data/ibposition/last', function(data) {
 
         tableData = data.map( function(position_date) {
           var position_date_data = {};

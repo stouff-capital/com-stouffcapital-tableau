@@ -19,6 +19,7 @@ AUTH=HTTPBasicAuth(Config.BASIC_AUTH_USERNAME, Config.BASIC_AUTH_PASSWORD )
 ALLOWED_EXTENSIONS = set(['csv', 'json'])
 UPLOAD_FOLDER = f'{os.path.dirname(os.path.abspath(__file__))}/static/data/'
 FILENAME_TABLEAU = 'tableau.csv'
+FILENAME_CENTRALE_HISTO = 'centrale_histo.json'
 FILENAME_XLS = 'xls.json'
 FILENAME_SURP = 'surp.json'
 FILENAME_EARNINGS_HISTORY = 'earningsHistory.json'
@@ -309,6 +310,37 @@ def tableau_data_centrale():
 
     return jsonify( df.to_dict(orient='records') )
     return jsonify( df[0:5].to_dict(orient='records') )
+
+
+@app.route('/tableau/data/centrale/histo/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_centrale_histo_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/centrale/histo', methods=['GET'])
+def tableau_data_centrale_histo():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO}', orient="records" )
+
+        df = df.rename(columns={'run.date': 'data.datestamp'})
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
 
 
 def ibsymbology_manual():
@@ -861,6 +893,22 @@ def tableau_data_ibPnl():
     return jsonify( df.to_dict(orient='records') )
 
 
+@app.route('/tableau/data/ibpnl/last', methods=['GET'])
+def tableau_data_ibPnl_last():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_PNL}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_PNL}', orient="records" )
+
+        df = df[ df.reportDate == df.reportDate.max() ]
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
 
 @app.route('/tableau/data/ibnav/upload', methods=['POST'])
 @basic_auth.required
@@ -918,6 +966,24 @@ def tableau_data_ibposition():
     df = df.where((pd.notnull(df)), None)
 
     return jsonify( df.to_dict(orient='records') )
+
+
+@app.route('/tableau/data/ibposition/last', methods=['GET'])
+def tableau_data_ibposition_last():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_POSITION}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_POSITION}', orient="records" )
+
+        df = df[ df.reportDate == df.reportDate.max() ]
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
 
 
 @app.route('/tableau/data/ib/eod/transactions')
@@ -978,7 +1044,7 @@ def tableau_data_xls_positions():
 
 
 @app.route('/tableau/data/centrale/histo')
-def tableau_data_centrale_histo():
+def tableau_data_centrale_histo_db():
 
     from sqlalchemy import create_engine
     engine = create_engine(f'postgresql://postgres:{Config.POSTGRES_PASSWORD}@{Config.POSTGRES_HOST}:{Config.POSTGRES_PORT}/centralhisto')
