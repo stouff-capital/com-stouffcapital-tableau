@@ -326,14 +326,14 @@ def tableau_data_centrale_histo_upload():
 
     file = request.files['file']
     if file.filename.split(".")[-1] == 'zip':
-        file.save( os.path.join(UPLOAD_FOLDER, FILENAME_CENTRALE_HISTO_ZIP) )
+        file.save( f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO_ZIP}' )
         import zipfile
-        with zipfile.ZipFile(FILENAME_CENTRALE_HISTO_ZIP,"r") as zip_ref:
-            zip_ref.extractall("./")
+        with zipfile.ZipFile( f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO_ZIP}', "r") as zip_ref:
+            zip_ref.extractall( f'{UPLOAD_FOLDER}' )
     elif file.filename.split(".")[-1] == 'json':
-        file.save( os.path.join(UPLOAD_FOLDER, FILENAME_CENTRALE_HISTO) )
+        file.save( f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO}' )
 
-    #df = pd.read_json(FILENAME_CENTRALE_HISTO, orient='records')
+    #df = pd.read_json(f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO}', orient='records')
 
     return jsonify( {
         'status': 'ok',
