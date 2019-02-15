@@ -7,6 +7,9 @@
 
 __pycache__
 
+app/static/data/*
 app/static/data/tableau.csv
+app/static/data/*.csv
+app/static/data/*.json
 
 .env
