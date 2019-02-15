@@ -19,6 +19,7 @@ AUTH=HTTPBasicAuth(Config.BASIC_AUTH_USERNAME, Config.BASIC_AUTH_PASSWORD )
 ALLOWED_EXTENSIONS = set(['csv', 'json'])
 UPLOAD_FOLDER = f'{os.path.dirname(os.path.abspath(__file__))}/static/data/'
 FILENAME_TABLEAU = 'tableau.csv'
+FILENAME_CENTRALE_HISTO_ZIP = 'centrale_histo.zip'
 FILENAME_CENTRALE_HISTO = 'centrale_histo.json'
 FILENAME_XLS = 'xls.json'
 FILENAME_SURP = 'surp.json'
@@ -315,14 +316,30 @@ def tableau_data_centrale():
 @app.route('/tableau/data/centrale/histo/upload', methods=['POST'])
 @basic_auth.required
 def tableau_data_centrale_histo_upload():
-    df = pd.DataFrame( request.get_json()['data'] )
+    if 'file' not in request.files:
+        app.logger.warning('missing file')
+        return jsonify( {
+            'status': 'error',
+            'submittedDatetime': datetime.datetime.now().isoformat(),
+            'error': 'missing file',
+        } )
 
-    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_CENTRALE_HISTO}', orient='records' )
+    file = request.files['file']
+    if file.filename.split(".")[-1] == 'zip':
+        file.save( os.path.join(UPLOAD_FOLDER, FILENAME_CENTRALE_HISTO_ZIP) )
+        import zipfile
+        with zipfile.ZipFile(FILENAME_CENTRALE_HISTO_ZIP,"r") as zip_ref:
+            zip_ref.extractall("./")
+    elif file.filename.split(".")[-1] == 'json':
+        file.save( os.path.join(UPLOAD_FOLDER, FILENAME_CENTRALE_HISTO) )
+
+    #df = pd.read_json(FILENAME_CENTRALE_HISTO, orient='records')
 
     return jsonify( {
         'status': 'ok',
+        'uploadFile': file.filename,
         'submittedDatetime': datetime.datetime.now().isoformat(),
-        'data': len(df),
+#        'data': len(df),
     } )
 
 
