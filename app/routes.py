@@ -29,6 +29,7 @@ FILENAME_IB_SYMBOLOGY = 'ibsymbology.json'
 FILENAME_IB_PNL = 'ib_pnl.json'
 FILENAME_IB_NAV = 'ib_nav.json'
 FILENAME_IB_POSITION = 'ib_position.json'
+FILENAME_IB_EXECUTION = 'ib_execution.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -1001,6 +1002,52 @@ def tableau_data_ibposition_last():
 
     return jsonify( df.to_dict(orient='records') )
 
+
+
+@app.route('/tableau/data/ibexecution/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_ibexecution_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/ibexecution', methods=['GET'])
+def tableau_data_ibexecution():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION}', orient="records" )
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
+
+@app.route('/tableau/data/ibexecution/last', methods=['GET'])
+def tableau_data_ibexecution_last():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION}', orient="records" )
+
+        df = df[ df.reportDate == df.reportDate.max() ]
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
 
 
 @app.route('/tableau/data/ib/eod/transactions')

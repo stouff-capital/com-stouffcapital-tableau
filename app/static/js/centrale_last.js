@@ -1072,6 +1072,233 @@
   }];
 
 
+  var ibExecution_dm = [{
+    id: 'accountId',
+    alias: 'accountId',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'assetCategory',
+    alias: 'assetCategory',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'buySell',
+    alias: 'buySell',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'changeInPrice',
+    alias: 'changeInPrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'changeInQuantity',
+    alias: 'changeInQuantity',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'closePrice',
+    alias: 'closePrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'conid',
+    alias: 'conid',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'cost',
+    alias: 'cost',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'currency',
+    alias: 'currency',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'description',
+    alias: 'description',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'exchange',
+    alias: 'exchange',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'expiry',
+    alias: 'expiry',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'extExecID',
+    alias: 'extExecID',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'fifoPnlRealized',
+    alias: 'fifoPnlRealized',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'fxPnl',
+    alias: 'fxPnl',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'fxRateToBase',
+    alias: 'fxRateToBase',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'ibCommission',
+    alias: 'ibCommission',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'ibCommissionCurrency',
+    alias: 'ibCommissionCurrency',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'ibExecID',
+    alias: 'ibExecID',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'ibOrderID',
+    alias: 'ibOrderID',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'isAPIOrder',
+    alias: 'isAPIOrder',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'isin',
+    alias: 'isin',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'issuer',
+    alias: 'issuer',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'listingExchange',
+    alias: 'listingExchange',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'mtmPnl',
+    alias: 'mtmPnl',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'multiplier',
+    alias: 'multiplier',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'netCash',
+    alias: 'netCash',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'notes',
+    alias: 'notes',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'openCloseIndicator',
+    alias: 'openCloseIndicator',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'openDateTime',
+    alias: 'openDateTime',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'orderReference',
+    alias: 'orderReference',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'orderTime',
+    alias: 'orderTime',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'orderType',
+    alias: 'orderType',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'origOrderID',
+    alias: 'origOrderID',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'principalAdjustFactor',
+    alias: 'principalAdjustFactor',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'proceeds',
+    alias: 'proceeds',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'putCall',
+    alias: 'putCall',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'quantity',
+    alias: 'quantity',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'reportDate',
+    alias: 'reportDate',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'securityID',
+    alias: 'securityID',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'settleDateTarget',
+    alias: 'settleDateTarget',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'strike',
+    alias: 'strike',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'symbol',
+    alias: 'symbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'taxes',
+    alias: 'taxes',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'tradeDate',
+    alias: 'tradeDate',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'tradeID',
+    alias: 'tradeID',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'tradeMoney',
+    alias: 'tradeMoney',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'tradePrice',
+    alias: 'tradePrice',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'tradeTime',
+    alias: 'tradeTime',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'transactionID',
+    alias: 'transactionID',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'transactionType',
+    alias: 'transactionType',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingConid',
+    alias: 'underlyingConid',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'underlyingListingExchange',
+    alias: 'underlyingListingExchange',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingSecurityID',
+    alias: 'underlyingSecurityID',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'underlyingSymbol',
+    alias: 'underlyingSymbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'volatilityOrderLink',
+    alias: 'volatilityOrderLink',
+    dataType: tableau.dataTypeEnum.string
+  }];
+
+
 
 
   // Define the schema
@@ -1121,6 +1348,14 @@
         id: 'ibPositionLast',
         alias: 'IB Open Positions Last',
         columns: ibPosition_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'ibExecution',
+        alias: 'IB Executions',
+        columns: ibExecution_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'ibExecutionLast',
+        alias: 'IB Executions Last',
+        columns: ibExecution_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -1301,6 +1536,38 @@
             position_date_data[ ibPosition_dm[field].id ] = ibPosition_dm[field].hasOwnProperty('src') ? position_date[ ibPosition_dm[field].src ] : position_date[ ibPosition_dm[field].id.replace(/__/g, '.') ];
           }
           return position_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibExecution") {
+
+      $.getJSON('/tableau/data/ibexecution', function(data) {
+
+        tableData = data.map( function(execution_date) {
+          var execution_date_data = {};
+          for (var field in ibExecution_dm) { // loop on indexes
+            execution_date_data[ ibExecution_dm[field].id ] = ibExecution_dm[field].hasOwnProperty('src') ? execution_date[ ibExecution_dm[field].src ] : execution_date[ ibExecution_dm[field].id.replace(/__/g, '.') ];
+          }
+          return execution_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibExecutionLast") {
+
+      $.getJSON('/tableau/data/ibexecution/last', function(data) {
+
+        tableData = data.map( function(execution_date) {
+          var execution_date_data = {};
+          for (var field in ibExecution_dm) { // loop on indexes
+            execution_date_data[ ibExecution_dm[field].id ] = ibExecution_dm[field].hasOwnProperty('src') ? execution_date[ ibExecution_dm[field].src ] : execution_date[ ibExecution_dm[field].id.replace(/__/g, '.') ];
+          }
+          return execution_date_data;
         } )
 
         table.appendRows(tableData);
