@@ -1299,6 +1299,41 @@
   }];
 
 
+  var bbgEmailRCO_dm = [{
+    id: 'ticker',
+    alias: 'symbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'name',
+    alias: 'name',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'institution',
+    alias: 'institution',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'action',
+    alias: 'instactionitution',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'perf',
+    alias: 'perf',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'PT',
+    alias: 'PT',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'timestamp',
+    alias: 'timestamp',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'ticker_us',
+    alias: 'ticker_us',
+    dataType: tableau.dataTypeEnum.string
+  }   ]
+
+
 
 
   // Define the schema
@@ -1356,6 +1391,10 @@
         id: 'ibExecutionLast',
         alias: 'IB Executions Last',
         columns: ibExecution_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bbgEmailRCO',
+        alias: 'BBG Email Rco',
+        columns: bbgEmailRCO_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -1568,6 +1607,22 @@
             execution_date_data[ ibExecution_dm[field].id ] = ibExecution_dm[field].hasOwnProperty('src') ? execution_date[ ibExecution_dm[field].src ] : execution_date[ ibExecution_dm[field].id.replace(/__/g, '.') ];
           }
           return execution_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bbgEmailRCO") {
+
+      $.getJSON('/tableau/data/bbgemailrco', function(data) {
+
+        tableData = data.map( function(rco) {
+          var rco_data = {};
+          for (var field in bbgEmailRCO_dm) { // loop on indexes
+            rco_data[ bbgEmailRCO_dm[field].id ] = bbgEmailRCO_dm[field].hasOwnProperty('src') ? rco[ bbgEmailRCO_dm[field].src ] : rco[ bbgEmailRCO_dm[field].id.replace(/__/g, '.') ];
+          }
+          return rco_data;
         } )
 
         table.appendRows(tableData);
