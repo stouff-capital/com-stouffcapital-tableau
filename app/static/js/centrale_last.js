@@ -1301,7 +1301,7 @@
 
   var bbgEmailRCO_dm = [{
     id: 'ticker',
-    alias: 'symbol',
+    alias: 'US_Symbol',
     dataType: tableau.dataTypeEnum.string
   }, {
     id: 'name',
@@ -1313,7 +1313,7 @@
     dataType: tableau.dataTypeEnum.string
   }, {
     id: 'action',
-    alias: 'instactionitution',
+    alias: 'action',
     dataType: tableau.dataTypeEnum.string
   }, {
     id: 'perf',
@@ -1324,14 +1324,123 @@
     alias: 'PT',
     dataType: tableau.dataTypeEnum.float
   }, {
-    id: 'timestamp',
-    alias: 'timestamp',
+    id: 'date_rco',
+    alias: 'date_rco',
     dataType: tableau.dataTypeEnum.date
   }, {
     id: 'ticker_us',
     alias: 'ticker_us',
     dataType: tableau.dataTypeEnum.string
-  }   ]
+  }];
+
+
+  var bbgEmailRCO_dm = [{
+    id: 'date_rco',
+    alias: 'date_rco',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'ticker',
+    alias: 'US_Symbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'ticker_us',
+    alias: 'ticker_us',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'name',
+    alias: 'name',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'institution',
+    alias: 'institution',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'action',
+    alias: 'action',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'perf',
+    alias: 'perf',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'PT',
+    alias: 'PT',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
+
+
+  var bbgEmailRCODigest_dm = [{
+    id: 'date_rco',
+    alias: 'date_rco',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'ticker',
+    alias: 'US_Symbol',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'ticker_us',
+    alias: 'ticker_us',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'name',
+    alias: 'name',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'institution',
+    alias: 'institution',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'action',
+    alias: 'action',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'perf',
+    alias: 'perf',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'PT',
+    alias: 'PT',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'close_previous',
+    alias: 'close_previous',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'open',
+    alias: 'open',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'high',
+    alias: 'high',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'low',
+    alias: 'low',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'close',
+    alias: 'close',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'px_chg',
+    alias: 'px_chg',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'daily_return',
+    alias: 'daily_return',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'volume',
+    alias: 'volume',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'px_daily_digestion',
+    alias: 'px_daily_digestion',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
+
 
 
 
@@ -1395,6 +1504,10 @@
         id: 'bbgEmailRCO',
         alias: 'BBG Email Rco',
         columns: bbgEmailRCO_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bbgEmailRCODigest',
+        alias: 'BBG Email Rco Digest',
+        columns: bbgEmailRCODigest_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -1621,6 +1734,22 @@
           var rco_data = {};
           for (var field in bbgEmailRCO_dm) { // loop on indexes
             rco_data[ bbgEmailRCO_dm[field].id ] = bbgEmailRCO_dm[field].hasOwnProperty('src') ? rco[ bbgEmailRCO_dm[field].src ] : rco[ bbgEmailRCO_dm[field].id.replace(/__/g, '.') ];
+          }
+          return rco_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bbgEmailRCODigest") {
+
+      $.getJSON('/tableau/data/bbgemailrcodigest', function(data) {
+
+        tableData = data.map( function(rco) {
+          var rco_data = {};
+          for (var field in bbgEmailRCODigest_dm) { // loop on indexes
+            rco_data[ bbgEmailRCODigest_dm[field].id ] = bbgEmailRCODigest_dm[field].hasOwnProperty('src') ? rco[ bbgEmailRCODigest_dm[field].src ] : rco[ bbgEmailRCODigest_dm[field].id.replace(/__/g, '.') ];
           }
           return rco_data;
         } )
