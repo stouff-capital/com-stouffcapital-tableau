@@ -206,6 +206,10 @@
     alias: '1M_SHORT_INT_PCT',
     dataType: tableau.dataTypeEnum.float
   }, {
+    id: 'raw__sources__bbg__data__VOL_PERCENTILE',
+    alias: 'VOL_PERCENTILE',
+    dataType: tableau.dataTypeEnum.float
+  }, {
     id: 'raw__sources__bbg__data__PX_TO_CASH_FLOW',
     alias: 'PX_TO_CASH_FLOW',
     dataType: tableau.dataTypeEnum.float
