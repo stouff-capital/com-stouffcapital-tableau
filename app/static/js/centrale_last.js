@@ -121,6 +121,14 @@
     alias: 'LOW_52WEEK',
     dataType: tableau.dataTypeEnum.float
   }, {
+    id: 'raw__sources__bbg__data__45_DAY_HIGH',
+    alias: '45_DAY_HIGH',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'raw__sources__bbg__data__45_DAY_LOW',
+    alias: '45_DAY_LOW',
+    dataType: tableau.dataTypeEnum.float
+  }, {
     id: 'raw__sources__bbg__data__NET_DEBT_TO_EBITDA',
     alias: 'NET_DEBT_TO_EBITDA',
     dataType: tableau.dataTypeEnum.float
@@ -178,6 +186,10 @@
     alias: 'BEST_TARGET_3MO_CHG',
     dataType: tableau.dataTypeEnum.float
   }, {
+    id: 'raw__sources__bbg__data__BEST_TARGET_PRICE',
+    alias: 'BEST_TARGET_PRICE',
+    dataType: tableau.dataTypeEnum.float
+  }, {
     id: 'raw__sources__bbg__data__LATEST_ANN_DT_QTRLY',
     alias: 'LATEST_ANN_DT_QTRLY',
     dataType: tableau.dataTypeEnum.date
@@ -208,6 +220,14 @@
   }, {
     id: 'raw__sources__bbg__data__VOL_PERCENTILE',
     alias: 'VOL_PERCENTILE',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'raw__sources__bbg__data__BEST_EPS_4WK_PCT_CHG',
+    alias: 'BEST_EPS_4WK_PCT_CHG',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'raw__sources__bbg__data__EQY_RAW_BETA_6M',
+    alias: 'EQY_RAW_BETA_6M',
     dataType: tableau.dataTypeEnum.float
   }, {
     id: 'raw__sources__bbg__data__PX_TO_CASH_FLOW',
