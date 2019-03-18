@@ -1465,6 +1465,27 @@
   }];
 
 
+  var bbgPort_dm = [{
+    id: 'portfolio_id',
+    alias: 'portfolio_id',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'portfolio_name',
+    alias: 'portfolio_name',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'portfolio_date',
+    alias: 'portfolio_date',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'position_ticker',
+    alias: 'position_ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'position_date',
+    alias: 'position_date',
+    dataType: tableau.dataTypeEnum.date
+  }];
 
 
 
@@ -1532,6 +1553,10 @@
         id: 'bbgEmailRCODigest',
         alias: 'BBG Email Rco Digest',
         columns: bbgEmailRCODigest_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bbgPort',
+        alias: 'BBG Portfolio',
+        columns: bbgPort_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -1776,6 +1801,22 @@
             rco_data[ bbgEmailRCODigest_dm[field].id ] = bbgEmailRCODigest_dm[field].hasOwnProperty('src') ? rco[ bbgEmailRCODigest_dm[field].src ] : rco[ bbgEmailRCODigest_dm[field].id.replace(/__/g, '.') ];
           }
           return rco_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bbgPort") {
+
+      $.getJSON('/tableau/data/scport', function(data) {
+
+        tableData = data.map( function(port_position) {
+          var port_position_data = {};
+          for (var field in bbgPort_dm) { // loop on indexes
+            port_position_data[ bbgPort_dm[field].id ] = bbgPort_dm[field].hasOwnProperty('src') ? port_position[ bbgPort_dm[field].src ] : port_position[ bbgPort_dm[field].id.replace(/__/g, '.') ];
+          }
+          return port_position_data;
         } )
 
         table.appendRows(tableData);
