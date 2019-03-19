@@ -1488,6 +1488,45 @@
   }];
 
 
+  var bookExposure_dm = [{
+    id: 'position_id',
+    alias: 'position_id',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'snapshot_datetime',
+    alias: 'snapshot_datetime',
+    dataType: tableau.dataTypeEnum.datetime
+  }, {
+    id: 'ib_conid',
+    alias: 'ib_conid',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'bbg_id',
+    alias: 'bbg_id',
+    dataType: tableau.dataTypeEnum.string
+  }, /*{
+    id: 'internal_underlyingId',
+    alias: 'internal_underlyingId',
+    dataType: tableau.dataTypeEnum.string
+  },*/ {
+    id: 'bbg_ticker',
+    alias: 'bbg_ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'internal_underlyingTicker',
+    alias: 'internal_underlyingTicker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'position_exposureBase',
+    alias: 'position_exposureBase',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'bbg_underlyingPrice',
+    alias: 'bbg_underlyingPrice',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
+
 
 
   // Define the schema
@@ -1557,6 +1596,10 @@
         id: 'bbgPort',
         alias: 'BBG Portfolio',
         columns: bbgPort_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bookExposure',
+        alias: 'Book Exposure',
+        columns: bookExposure_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -1817,6 +1860,22 @@
             port_position_data[ bbgPort_dm[field].id ] = bbgPort_dm[field].hasOwnProperty('src') ? port_position[ bbgPort_dm[field].src ] : port_position[ bbgPort_dm[field].id.replace(/__/g, '.') ];
           }
           return port_position_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bookExposure") {
+
+      $.getJSON('/tableau/data/bookexposure', function(data) {
+
+        tableData = data.map( function(book_position) {
+          var book_position_data = {};
+          for (var field in bookExposure_dm) { // loop on indexes
+            book_position_data[ bookExposure_dm[field].id ] = bookExposure_dm[field].hasOwnProperty('src') ? book_position[ bookExposure_dm[field].src ] : book_position[ bookExposure_dm[field].id.replace(/__/g, '.') ];
+          }
+          return book_position_data;
         } )
 
         table.appendRows(tableData);
