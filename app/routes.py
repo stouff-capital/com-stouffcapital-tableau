@@ -1164,6 +1164,9 @@ def tableau_data_bookexposure():
     else:
         df = pd.DataFrame([])
 
+    # processing
+    df['internal_underlyingTicker'] = df['internal_underlyingTicker'].apply(patch_ticker_marketplace)
+
     #patch missing values
     df = df.where((pd.notnull(df)), None)
 
