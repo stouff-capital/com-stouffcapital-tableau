@@ -1513,16 +1513,52 @@
     alias: 'bbg_ticker',
     dataType: tableau.dataTypeEnum.string
   }, {
+    id: 'asset_multiplier',
+    alias: 'asset_multiplier',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'asset_currency',
+    alias: 'asset_currency',
+    dataType: tableau.dataTypeEnum.string
+  }, {
     id: 'internal_underlyingTicker',
     alias: 'internal_underlyingTicker',
     dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'asset_priceClose',
+    alias: 'asset_priceClose',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'asset_price',
+    alias: 'asset_price',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'asset_deltaPct',
+    alias: 'asset_deltaPct',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'bbg_underlyingPrice',
+    alias: 'bbg_underlyingPrice',
+    dataType: tableau.dataTypeEnum.float
   }, {
     id: 'position_exposureBase',
     alias: 'position_exposureBase',
     dataType: tableau.dataTypeEnum.float
   }, {
-    id: 'bbg_underlyingPrice',
-    alias: 'bbg_underlyingPrice',
+    id: 'position_qtyClose',
+    alias: 'position_qtyClose',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'position_qtyCurrent',
+    alias: 'position_qtyCurrent',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'position_ntcfIntradayLocal',
+    alias: 'position_ntcfIntradayLocal',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'position_fxRate',
+    alias: 'position_fxRate',
     dataType: tableau.dataTypeEnum.float
   }];
 
