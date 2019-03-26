@@ -1135,6 +1135,9 @@ def tableau_data_scport():
     else:
         df = pd.DataFrame([])
 
+    # processing
+    df['position_ticker'] = df['position_ticker'].apply(patch_ticker_marketplace)
+
     #patch missing values
     df = df.where((pd.notnull(df)), None)
 
@@ -1145,6 +1148,10 @@ def tableau_data_scport():
 @basic_auth.required
 def tableau_data_bookexposure_upload():
     df = pd.DataFrame( request.get_json()['data'] )
+
+    # processing
+    df['position_dailyPnlLocal'] = ((df['asset_price']-df['asset_priceClose'])*df['position_qtyCurrent']*df['asset_multiplier']+df['position_ntcfIntradayLocal']+(df['position_qtyCurrent']-df['position_qtyClose'])*df['asset_priceClose']*df['asset_multiplier'])
+    df['position_dailyPnlBase'] = df['position_dailyPnlLocal'] * df['position_fxRate']
 
     df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_BOOK_EXPOSURE}', orient='records' )
 

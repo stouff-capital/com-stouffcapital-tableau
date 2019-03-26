@@ -1560,7 +1560,15 @@
     id: 'position_fxRate',
     alias: 'position_fxRate',
     dataType: tableau.dataTypeEnum.float
-  }];
+  }/*, {
+    id: 'position_dailyPnlLocal',
+    alias: 'position_dailyPnlLocal',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'position_dailyPnlBase',
+    alias: 'position_dailyPnlBase',
+    dataType: tableau.dataTypeEnum.float
+  }*/];
 
 
 
