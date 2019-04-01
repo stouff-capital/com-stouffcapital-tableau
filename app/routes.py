@@ -30,6 +30,7 @@ FILENAME_IB_PNL = 'ib_pnl.json'
 FILENAME_IB_NAV = 'ib_nav.json'
 FILENAME_IB_POSITION = 'ib_position.json'
 FILENAME_IB_EXECUTION = 'ib_execution.json'
+FILENAME_IB_EXECUTION_FX = 'ib_execution_fx.json'
 FILENAME_BBG_EMAIL_RCO = 'bbg_email_rco.json'
 FILENAME_BBG_EMAIL_RCO_DIGEST = 'bbg_email_rco_digest.json'
 FILENAME_BBG_SC_PORTS = 'bbg_sc_ports.json'
@@ -1052,6 +1053,39 @@ def tableau_data_ibexecution_last():
     df = df.where((pd.notnull(df)), None)
 
     return jsonify( df.to_dict(orient='records') )
+
+
+
+
+@app.route('/tableau/data/ibexecutionfx/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_ibexecutionfx_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION_FX}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/ibexecutionfx', methods=['GET'])
+def tableau_data_ibexecutionfx():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION_FX}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_EXECUTION_FX}', orient="records" )
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
+
 
 
 @app.route('/tableau/data/bbgemailrco/upload', methods=['POST'])

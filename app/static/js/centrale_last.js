@@ -1629,6 +1629,10 @@
         alias: 'IB Executions Last',
         columns: ibExecution_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }, {
+        id: 'ibExecutionFX',
+        alias: 'IB Executions Forex',
+        columns: ibExecution_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
         id: 'bbgEmailRCO',
         alias: 'BBG Email Rco',
         columns: bbgEmailRCO_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
@@ -1849,6 +1853,22 @@
     } else if (table.tableInfo.id == "ibExecutionLast") {
 
       $.getJSON('/tableau/data/ibexecution/last', function(data) {
+
+        tableData = data.map( function(execution_date) {
+          var execution_date_data = {};
+          for (var field in ibExecution_dm) { // loop on indexes
+            execution_date_data[ ibExecution_dm[field].id ] = ibExecution_dm[field].hasOwnProperty('src') ? execution_date[ ibExecution_dm[field].src ] : execution_date[ ibExecution_dm[field].id.replace(/__/g, '.') ];
+          }
+          return execution_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibExecutionFX") {
+
+      $.getJSON('/tableau/data/ibexecutionfx', function(data) {
 
         tableData = data.map( function(execution_date) {
           var execution_date_data = {};
