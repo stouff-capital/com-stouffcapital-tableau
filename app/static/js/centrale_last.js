@@ -69,6 +69,10 @@
     alias: 'CHG_PCT_1YR',
     dataType: tableau.dataTypeEnum.float
   }, {
+    id: 'raw__sources__bbg__data__REL_5D',
+    alias: 'REL_5D',
+    dataType: tableau.dataTypeEnum.float
+  }, {
     id: 'raw__sources__bbg__data__REL_1M',
     alias: 'REL_1M',
     dataType: tableau.dataTypeEnum.float
@@ -127,6 +131,11 @@
   }, {
     id: 'raw__sources__bbg__data__45_DAY_LOW',
     alias: '45_DAY_LOW',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'raw__sources__bbg__data__BEST_PE_RATIO__CY4',
+    alias: 'BEST_PE_RATIO@CY+4',
+    src: 'raw.sources.bbg.data.BEST_PE_RATIO@CY+4',
     dataType: tableau.dataTypeEnum.float
   }, {
     id: 'raw__sources__bbg__data__NET_DEBT_TO_EBITDA',
