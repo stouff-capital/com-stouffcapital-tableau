@@ -1618,6 +1618,14 @@
         alias: 'IB PnL',
         columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }, {
+        id: 'ibNavSinceInception',
+        alias: 'IB NAV Since Inception',
+        columns: ibnav_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'ibPnlSinceInception',
+        alias: 'IB PnL Since Inception',
+        columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
         id: 'ibPnlLast',
         alias: 'IB PnL Last',
         columns: ibPnl_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
@@ -1779,9 +1787,41 @@
         doneCallback();
 
       });
+    } else if (table.tableInfo.id == "ibNavSinceInception") {
+
+      $.getJSON('/tableau/data/ibnavsinceinception', function(data) {
+
+        tableData = data.map( function(nav_date) {
+          var nav_date_data = {};
+          for (var field in ibnav_dm) { // loop on indexes
+            nav_date_data[ ibnav_dm[field].id ] = ibnav_dm[field].hasOwnProperty('src') ? nav_date[ ibnav_dm[field].src ] : nav_date[ ibnav_dm[field].id.replace(/__/g, '.') ];
+          }
+          return nav_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
     } else if (table.tableInfo.id == "ibPnl") {
 
       $.getJSON('/tableau/data/ibpnl', function(data) {
+
+        tableData = data.map( function(pnl_date) {
+          var pnl_date_data = {};
+          for (var field in ibPnl_dm) { // loop on indexes
+            pnl_date_data[ ibPnl_dm[field].id ] = ibPnl_dm[field].hasOwnProperty('src') ? pnl_date[ ibPnl_dm[field].src ] : pnl_date[ ibPnl_dm[field].id.replace(/__/g, '.') ];
+          }
+          return pnl_date_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "ibPnlSinceInception") {
+
+      $.getJSON('/tableau/data/ibpnlsinceinception', function(data) {
 
         tableData = data.map( function(pnl_date) {
           var pnl_date_data = {};

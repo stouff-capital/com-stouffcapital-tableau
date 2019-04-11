@@ -28,6 +28,8 @@ FILENAME_VIX_FUTURE_HISTORY = 'cboeFuturesVix.json'
 FILENAME_IB_SYMBOLOGY = 'ibsymbology.json'
 FILENAME_IB_PNL = 'ib_pnl.json'
 FILENAME_IB_NAV = 'ib_nav.json'
+FILENAME_IB_PNL_SINCEINCEPTION = 'ib_pnl_sinceinception.json'
+FILENAME_IB_NAV_SINCEINCEPTION = 'ib_nav_sinceinception.json'
 FILENAME_IB_POSITION = 'ib_position.json'
 FILENAME_IB_EXECUTION = 'ib_execution.json'
 FILENAME_IB_EXECUTION_FX = 'ib_execution_fx.json'
@@ -887,6 +889,37 @@ def tableau_data_ibsymbology():
     return jsonify( df.to_dict(orient='records') )
 
 
+@app.route('/tableau/data/ibpnlsinceinception/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_ibPnlsinceinception_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_IB_PNL_SINCEINCEPTION}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/ibpnlsinceinception', methods=['GET'])
+def tableau_data_ibPnlsinceinception():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_PNL_SINCEINCEPTION}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_PNL_SINCEINCEPTION}', orient="records" )
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
+
+
+
 @app.route('/tableau/data/ibpnl/upload', methods=['POST'])
 @basic_auth.required
 def tableau_data_ibPnl_upload():
@@ -923,6 +956,35 @@ def tableau_data_ibPnl_last():
         df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_PNL}', orient="records" )
 
         df = df[ df.reportDate == df.reportDate.max() ]
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
+
+@app.route('/tableau/data/ibnavsinceinception/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_ibnavsinceinception_upload():
+    df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_IB_NAV_SINCEINCEPTION}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/ibnavsinceinception', methods=['GET'])
+def tableau_data_ibnavsinception():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_IB_NAV_SINCEINCEPTION}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_IB_NAV_SINCEINCEPTION}', orient="records" )
 
     else:
         df = pd.DataFrame([])
