@@ -37,6 +37,7 @@ FILENAME_BBG_EMAIL_RCO = 'bbg_email_rco.json'
 FILENAME_BBG_EMAIL_RCO_DIGEST = 'bbg_email_rco_digest.json'
 FILENAME_BBG_SC_PORTS = 'bbg_sc_ports.json'
 FILENAME_BOOK_EXPOSURE = 'book_exposure.json'
+FILENAME_BOOK_VS_PORTS = 'book_vs_ports.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -656,11 +657,11 @@ def tableau_data_statics():
                             'ticker.given': asset['underlyingBloombergTicker'],
                             'data.datestamp': datetime.datetime.now().strftime('%Y-%m-%d'),
                             'asset.NAME':  asset['underlyingBloombergTicker'],
-                            'asset.CRNCY':  None,
-                            'asset.GICS_SECTOR_NAME':  asset['GICS_SECTOR_NAME'] if asset['GICS_SECTOR_NAME'][0] != '#' else None,
-                            'asset.GICS_INDUSTRY_GROUP_NAME':  asset['GICS_INDUSTRY_GROUP_NAME'] if asset['GICS_INDUSTRY_GROUP_NAME'][0] != '#' else None,
-                            'asset.GICS_INDUSTRY_NAME':  asset['GICS_INDUSTRY_NAME'] if asset['GICS_INDUSTRY_NAME'][0] != '#' else None,
-                            'asset.region.MatrixRegion':  asset['asset.region.MatrixRegion'] if asset['asset.region.MatrixRegion'][0] != '#' else None,
+                            'asset.CRNCY': None,
+                            'asset.GICS_SECTOR_NAME': None,
+                            'asset.GICS_INDUSTRY_GROUP_NAME': None,
+                            'asset.GICS_INDUSTRY_NAME': None,
+                            'asset.region.MatrixRegion': None,
                         }
                     )
 
