@@ -1580,6 +1580,28 @@
   }*/];
 
 
+  var bookvsports_dm = [{
+    id: 'ticker',
+    alias: 'ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'book_name',
+    alias: 'book_name',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'sc_portfolio_name',
+    alias: 'sc_portfolio_name',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'book_weight',
+    alias: 'book_weight',
+    dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'sc_weight',
+    alias: 'sc_weight',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
 
 
   // Define the schema
@@ -1665,6 +1687,10 @@
         id: 'bookExposure',
         alias: 'Book Exposure',
         columns: bookExposure_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bookVsPorts',
+        alias: 'Book vs PORTS',
+        columns: bookvsports_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -1989,6 +2015,22 @@
             book_position_data[ bookExposure_dm[field].id ] = bookExposure_dm[field].hasOwnProperty('src') ? book_position[ bookExposure_dm[field].src ] : book_position[ bookExposure_dm[field].id.replace(/__/g, '.') ];
           }
           return book_position_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bookVsPorts") {
+
+      $.getJSON('/tableau/data/bookvsports', function(data) {
+
+        tableData = data.map( function(position) {
+          var position_data = {};
+          for (var field in bookvsports_dm) { // loop on indexes
+            position_data[ bookvsports_dm[field].id ] = bookvsports_dm[field].hasOwnProperty('src') ? position[ bookvsports_dm[field].src ] : position[ bookvsports_dm[field].id.replace(/__/g, '.') ];
+          }
+          return position_data;
         } )
 
         table.appendRows(tableData);
