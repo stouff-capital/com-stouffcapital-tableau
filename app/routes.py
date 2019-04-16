@@ -38,6 +38,7 @@ FILENAME_BBG_EMAIL_RCO_DIGEST = 'bbg_email_rco_digest.json'
 FILENAME_BBG_SC_PORTS = 'bbg_sc_ports.json'
 FILENAME_BOOK_EXPOSURE = 'book_exposure.json'
 FILENAME_BOOK_VS_PORTS = 'book_vs_ports.json'
+FILENAME_MATRIX_CURRENT = 'matrix_current.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -1309,6 +1310,30 @@ def tableau_data_bookvsports():
     df = df.where((pd.notnull(df)), None)
 
     return jsonify( df.to_dict(orient='records') )
+
+
+@app.route('/tableau/data/matrixcurrent/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_matrixcurrent_upload():
+    with open(f'{UPLOAD_FOLDER}{FILENAME_MATRIX_CURRENT}', 'w') as f:
+        f.write( json.dumps(request.get_json()['data']) )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(request.get_json()['data']),
+    } )
+
+
+@app.route('/tableau/data/matrixcurrent', methods=['GET'])
+def tableau_data_matrixcurrent():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_MATRIX_CURRENT}' ):
+        with open(f'{UPLOAD_FOLDER}{FILENAME_MATRIX_CURRENT}', 'r') as f:
+            for row in f:
+                return jsonify( json.loads(row) )
+    else:
+        return jsonify( [] )
 
 
 @app.route('/tableau/data/ib/eod/transactions')
