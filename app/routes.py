@@ -1336,6 +1336,39 @@ def tableau_data_matrixcurrent():
         return jsonify( [] )
 
 
+@app.route('/tableau/data/matrix/sectors', methods=['GET'])
+def tableau_data_matrix_flat():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_MATRIX_CURRENT}' ):
+        with open(f'{UPLOAD_FOLDER}{FILENAME_MATRIX_CURRENT}', 'r') as f:
+            for row in f:
+                data = json.loads(row)
+                break
+        dfm = pd.DataFrame(data)
+        sectors_th = pd.DataFrame()
+
+        for region in [ {'region': 'U.S.A.', 'sheet': 'Matrix Sector EU' }, {'region': 'Europe', 'sheet': 'Matrix sector US' }]:
+
+            dd = pd.DataFrame(dfm['criterias'][dfm['sheet']==region['sheet']]).reset_index()
+
+            for l in range(len(dd)):
+                ddd = pd.DataFrame(dd['criterias'][l])
+                sector = ddd[ddd['criteria']=='gics'].reset_index()['value'][0]
+                weight = ddd[ddd['criteria']=='weightText'].reset_index()['value'][0]
+                rank = ddd[ddd['criteria']=='sectorRankingRank'].reset_index()['value'][0]
+                bk_wei = ddd[ddd['criteria']=='WeightInBenchmark'].reset_index()['value'][0]
+
+                ss = {'region':region,'sector':sector,'matrix_reco':weight,'rank':rank,'bk_wei':bk_wei}
+                ds = pd.DataFrame(ss)
+                sectors_th = sectors_th.append(ds, ignore_index=True)
+
+        sectors_th = sectors_th.where((pd.notnull(sectors_th)), None)
+
+        return jsonify( sectors_th.to_dict(orient='records') )
+    else:
+        return jsonify( [] )
+
+
 @app.route('/tableau/data/ib/eod/transactions')
 @basic_auth.required
 def tableau_data_ib_transactions():

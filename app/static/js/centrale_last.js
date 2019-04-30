@@ -1603,6 +1603,29 @@
   }];
 
 
+  var matrixSector_dm = [{
+    id: 'region',
+    alias: 'region',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'sector',
+    alias: 'sector',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'matrix_reco',
+    alias: 'matrix_reco',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'rank',
+    alias: 'rank',
+    dataType: tableau.dataTypeEnum.int
+  }, {
+    id: 'bk_wei',
+    alias: 'bk_wei',
+    dataType: tableau.dataTypeEnum.float
+  }];
+
+
 
   // Define the schema
   myConnector.getSchema = function(schemaCallback) {
@@ -1691,6 +1714,10 @@
         id: 'bookVsPorts',
         alias: 'Book vs PORTS',
         columns: bookvsports_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'matrixSectors',
+        alias: 'Matrix Sectors',
+        columns: matrixSector_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -2031,6 +2058,22 @@
             position_data[ bookvsports_dm[field].id ] = bookvsports_dm[field].hasOwnProperty('src') ? position[ bookvsports_dm[field].src ] : position[ bookvsports_dm[field].id.replace(/__/g, '.') ];
           }
           return position_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "matrixSectors") {
+
+      $.getJSON('/tableau/data/matrix/sectors', function(data) {
+
+        tableData = data.map( function(matrix_entry) {
+          var sector_data = {};
+          for (var field in matrixSector_dm) { // loop on indexes
+            sector_data[ matrixSector_dm[field].id ] = matrixSector_dm[field].hasOwnProperty('src') ? matrix_entry[ matrixSector_dm[field].src ] : matrix_entry[ matrixSector_dm[field].id.replace(/__/g, '.') ];
+          }
+          return sector_data;
         } )
 
         table.appendRows(tableData);
