@@ -534,6 +534,13 @@ def ibsymbology_manual():
         'asset.region.MatrixRegion': 'U.S.A.',
         'exposureType': 'EQUITY'
     }, {
+        'ticker.given': 'KRE US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Financials',
+        'asset.NAME': 'SPDR S&P REGIONAL BANKING',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
         'ticker.given': 'SMH US EQUITY',
         'asset.GICS_SECTOR_NAME': 'Information Technology',
         'asset.NAME': 'VANECK VECTORS SEMICONDUCTOR',
@@ -667,6 +674,8 @@ def tableau_data_statics():
                     )
 
         df_openPosNotInUniverse = pd.DataFrame(list_openPosNotInUniverse)
+        df_openPosNotInUniverse = df_openPosNotInUniverse.drop_duplicates(subset='ticker.given')
+        
         df = pd.concat([df, df_openPosNotInUniverse], sort=False)
 
 
