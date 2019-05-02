@@ -408,6 +408,13 @@ def ibsymbology_manual():
         'asset.region.MatrixRegion': 'U.S.A.',
         'exposureType': 'BOND'
     }, {
+        'ticker.given': 'VXX US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'IPATH SERIES B S&P 500 VIX',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'VOLATILITY'
+    }, {
         'ticker.given': 'CAC INDEX',
         'asset.GICS_SECTOR_NAME': 'INDEX',
         'asset.NAME': 'CAC 40 INDEX',
@@ -418,6 +425,13 @@ def ibsymbology_manual():
         'ticker.given': 'DAX INDEX',
         'asset.GICS_SECTOR_NAME': 'INDEX',
         'asset.NAME': 'DAX INDEX',
+        'asset.CRNCY': 'EUR',
+        'asset.region.MatrixRegion': 'Europe',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'FTSEMIB INDEX',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'FTSE MIB INDEX',
         'asset.CRNCY': 'EUR',
         'asset.region.MatrixRegion': 'Europe',
         'exposureType': 'EQUITY'
@@ -446,6 +460,13 @@ def ibsymbology_manual():
         'ticker.given': 'RTY INDEX',
         'asset.GICS_SECTOR_NAME': 'INDEX',
         'asset.NAME': 'RUSSEL 2000 INDEX',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
+        'ticker.given': 'QQQ US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'INDEX',
+        'asset.NAME': 'INVESCO QQQ TRUST SERIES 1',
         'asset.CRNCY': 'USD',
         'asset.region.MatrixRegion': 'U.S.A.',
         'exposureType': 'EQUITY'
@@ -534,6 +555,13 @@ def ibsymbology_manual():
         'asset.region.MatrixRegion': 'U.S.A.',
         'exposureType': 'EQUITY'
     }, {
+        'ticker.given': 'IBB US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Health Care',
+        'asset.NAME': 'ISHARES NASDAQ BIOTECHNOLOGY',
+        'asset.CRNCY': 'USD',
+        'asset.region.MatrixRegion': 'U.S.A.',
+        'exposureType': 'EQUITY'
+    }, {
         'ticker.given': 'KRE US EQUITY',
         'asset.GICS_SECTOR_NAME': 'Financials',
         'asset.NAME': 'SPDR S&P REGIONAL BANKING',
@@ -541,16 +569,16 @@ def ibsymbology_manual():
         'asset.region.MatrixRegion': 'U.S.A.',
         'exposureType': 'EQUITY'
     }, {
-        'ticker.given': 'SMH US EQUITY',
+        'ticker.given': 'ROBO US EQUITY',
         'asset.GICS_SECTOR_NAME': 'Information Technology',
-        'asset.NAME': 'VANECK VECTORS SEMICONDUCTOR',
+        'asset.NAME': 'ROBO GLOBAL ROBOTICS AND AUT',
         'asset.CRNCY': 'USD',
         'asset.region.MatrixRegion': 'U.S.A.',
         'exposureType': 'EQUITY'
     }, {
-        'ticker.given': 'IBB US EQUITY',
-        'asset.GICS_SECTOR_NAME': 'Health Care',
-        'asset.NAME': 'ISHARES NASDAQ BIOTECHNOLOGY',
+        'ticker.given': 'SMH US EQUITY',
+        'asset.GICS_SECTOR_NAME': 'Information Technology',
+        'asset.NAME': 'VANECK VECTORS SEMICONDUCTOR',
         'asset.CRNCY': 'USD',
         'asset.region.MatrixRegion': 'U.S.A.',
         'exposureType': 'EQUITY'
@@ -675,7 +703,7 @@ def tableau_data_statics():
 
         df_openPosNotInUniverse = pd.DataFrame(list_openPosNotInUniverse)
         df_openPosNotInUniverse = df_openPosNotInUniverse.drop_duplicates(subset='ticker.given')
-        
+
         df = pd.concat([df, df_openPosNotInUniverse], sort=False)
 
 
