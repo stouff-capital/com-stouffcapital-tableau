@@ -39,6 +39,7 @@ FILENAME_BBG_SC_PORTS = 'bbg_sc_ports.json'
 FILENAME_BOOK_EXPOSURE = 'book_exposure.json'
 FILENAME_BOOK_VS_PORTS = 'book_vs_ports.json'
 FILENAME_MATRIX_CURRENT = 'matrix_current.json'
+FILENAME_TAG_HISTO = 'tag_histo.json'
 
 MODELS = ['growth', 'lowvol', 'u2', 'slowdown', 'sales']
 
@@ -1404,6 +1405,71 @@ def tableau_data_matrix_flat():
         return jsonify( sectors_th.to_dict(orient='records') )
     else:
         return jsonify( [] )
+
+
+@app.route('/tableau/data/tag/upload', methods=['POST'])
+@basic_auth.required
+def tableau_data_tag_upload():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient="records" )
+
+        # append new content
+        new = pd.DataFrame( request.get_json()['data'] )
+
+        combis = new.groupby(['source', 'srcDate']).size().reset_index().to_dict(orient='records')
+
+        for combi in combis:
+            mask  = df[ (df['source'] == combi['source']) & (df['srcDate'] == combi['srcDate']) ]
+            df = df.drop( mask.index )
+
+        df = pd.concat( [df, new] )
+
+
+    else:
+        df = pd.DataFrame( request.get_json()['data'] )
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient='records' )
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+    } )
+
+
+@app.route('/tableau/data/tag', methods=['GET'])
+def tableau_data_tag():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient="records" )
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    df['ticker'] = df['ticker'].apply(patch_ticker_marketplace)
+
+    return jsonify( df.to_dict(orient='records') )
+
+
+@app.route('/tableau/data/tag/last', methods=['GET'])
+def tableau_data_tag_last():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient="records" )
+
+        df = df[ df['srcDate'] == df['srcDate'].max() ]
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    df['ticker'] = df['ticker'].apply(patch_ticker_marketplace)
+
+    return jsonify( df.to_dict(orient='records') )
 
 
 @app.route('/tableau/data/ib/eod/transactions')

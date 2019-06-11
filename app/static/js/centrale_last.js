@@ -1626,6 +1626,26 @@
   }];
 
 
+  var tag_dm = [{
+    id: 'source',
+    alias: 'source',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'srcDate',
+    alias: 'srcDate',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'ticker',
+    alias: 'ticker',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'tag',
+    alias: 'tag',
+    dataType: tableau.dataTypeEnum.string
+  }];
+
+
+
 
   // Define the schema
   myConnector.getSchema = function(schemaCallback) {
@@ -1718,6 +1738,14 @@
         id: 'matrixSectors',
         alias: 'Matrix Sectors',
         columns: matrixSector_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'tag',
+        alias: 'Tag',
+        columns: tag_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'tagLast',
+        alias: 'Tag Last',
+        columns: tag_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }
     ]);
   };
@@ -2074,6 +2102,38 @@
             sector_data[ matrixSector_dm[field].id ] = matrixSector_dm[field].hasOwnProperty('src') ? matrix_entry[ matrixSector_dm[field].src ] : matrix_entry[ matrixSector_dm[field].id.replace(/__/g, '.') ];
           }
           return sector_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "tag") {
+
+      $.getJSON('/tableau/data/tag', function(data) {
+
+        tableData = data.map( function(tag_histo) {
+          var tag_data = {};
+          for (var field in tag_dm) { // loop on indexes
+            tag_data[ tag_dm[field].id ] = tag_dm[field].hasOwnProperty('src') ? tag_histo[ tag_dm[field].src ] : tag_histo[ tag_dm[field].id.replace(/__/g, '.') ];
+          }
+          return tag_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "tagLast") {
+
+      $.getJSON('/tableau/data/tag/last', function(data) {
+
+        tableData = data.map( function(tag_histo) {
+          var tag_data = {};
+          for (var field in tag_dm) { // loop on indexes
+            tag_data[ tag_dm[field].id ] = tag_dm[field].hasOwnProperty('src') ? tag_histo[ tag_dm[field].src ] : tag_histo[ tag_dm[field].id.replace(/__/g, '.') ];
+          }
+          return tag_data;
         } )
 
         table.appendRows(tableData);
