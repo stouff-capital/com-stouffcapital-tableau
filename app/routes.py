@@ -36,6 +36,7 @@ FILENAME_IB_EXECUTION_FX = 'ib_execution_fx.json'
 FILENAME_BBG_EMAIL_RCO = 'bbg_email_rco.json'
 FILENAME_BBG_EMAIL_RCO_DIGEST = 'bbg_email_rco_digest.json'
 FILENAME_BBG_SC_PORTS = 'bbg_sc_ports.json'
+FILENAME_BBG_SC_PORTS_HISTO = 'bbg_sc_ports_histo.json'
 FILENAME_BOOK_EXPOSURE = 'book_exposure.json'
 FILENAME_BOOK_VS_PORTS = 'book_vs_ports.json'
 FILENAME_MATRIX_CURRENT = 'matrix_current.json'
@@ -1251,9 +1252,25 @@ def tableau_data_bbgemailrcodigest():
 @app.route('/tableau/data/scport/upload', methods=['POST'])
 @basic_auth.required
 def tableau_data_scport_upload():
-    df = pd.DataFrame( request.get_json()['data'] )
 
-    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS}', orient='records' )
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS_HISTO}', orient="records" )
+
+        # append new content
+        new = pd.DataFrame( request.get_json()['data'] )
+        combis = new.groupby(['portfolio_name', 'portfolio_date']).size().reset_index().to_dict(orient='records')
+
+        for combi in combis:
+            mask  = df[ (df['portfolio_name'] == combi['portfolio_name']) & (df['portfolio_date'] == combi['portfolio_date']) ]
+            df = df.drop( mask.index )
+
+        df = pd.concat( [df, new] )
+
+    else:
+        df = pd.DataFrame( request.get_json()['data'] )
+
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS_HISTO}', orient='records' )
 
     return jsonify( {
         'status': 'ok',
@@ -1265,9 +1282,8 @@ def tableau_data_scport_upload():
 @app.route('/tableau/data/scport', methods=['GET'])
 def tableau_data_scport():
 
-    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS}' ):
-        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS}', orient="records" )
-
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS_HISTO}', orient="records" )
     else:
         df = pd.DataFrame([])
 
@@ -1278,6 +1294,25 @@ def tableau_data_scport():
     df = df.where((pd.notnull(df)), None)
 
     return jsonify( df.to_dict(orient='records') )
+
+
+@app.route('/tableau/data/scport/last', methods=['GET'])
+def tableau_data_scport_last():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_BBG_SC_PORTS_HISTO}', orient="records" )
+
+        df = df[ df['portfolio_date'] == df['portfolio_date'].max() ]
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    df['position_ticker'] = df['position_ticker'].apply(patch_ticker_marketplace)
+
+    return jsonify( df.to_dict(orient='records') )
+
 
 
 @app.route('/tableau/data/bookexposure/upload', methods=['POST'])
@@ -1438,11 +1473,109 @@ def tableau_data_tag_upload():
     } )
 
 
+
+def get_tag_processing(tag):
+    if 'Core_' in tag or  (' VOL' in tag and 'EPS' in tag):
+        prefix = 'LOWVOL'
+    elif 'SC' in tag[:3]:
+        if 'SHORT' in tag:
+            prefix= 'SHORT'
+        else:
+            prefix= 'QUANTAMENTAL'
+    else:
+        prefix = ''
+
+    # region
+    if '_US_' in tag or 'SPX' in tag or ' US' in tag:
+        region = "US"
+    elif'_EU_' in tag or 'SXXP' in tag or 'EU' in tag:
+        region = "EU"
+    elif' ASIA ' in tag:
+        region = "ASIA"
+    else:
+        region = "OTHER"
+
+    return f'{prefix} {region}'.lstrip()
+
+
+
+def compute_tag_priority(tag):
+    score = 0
+    if 'QUANT' in tag or 'SHORT' in tag:
+        score += 1
+    elif 'LOWVOL ' in tag:
+        score += 10
+    else:
+        score += 20
+    return score
+
+
+@app.route('/tableau/data/tag/histo', methods=['GET'])
+def tableau_data_tag_histo():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}' ):
+        df_tag_histo = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient="records" )
+
+        # start of the fund
+        #df_tag_histo = df_tag_histo[ df_tag_histo['srcDate'] >= '2018-05-01' ]
+
+        df_tag_histo['tag'] = df_tag_histo['tag'].apply(get_tag_processing)
+        df_tag_histo['tag_priority'] = df_tag_histo['tag'].apply(compute_tag_priority)
+        df_tag_histo['ticker'] = df_tag_histo['ticker'].apply(patch_ticker_marketplace)
+
+        list_df = []
+        for tag in df_tag_histo['tag'].unique():
+            df_select_tag = df_tag_histo[ df_tag_histo['tag'] == tag ]
+
+            df_select_tag_last = df_select_tag[ df_select_tag['srcDate'] == max(df_select_tag['srcDate']) ]
+            df_select_tag_last['srcDate'] = pd.to_datetime('today').date()
+
+            df_select_tag = pd.concat([df_select_tag, df_select_tag_last])
+            df_select_tag.reset_index(drop=True, inplace=True)
+
+            for ticker in df_select_tag['ticker'].unique():
+                df_select_tag_ticker = df_select_tag[ df_select_tag['ticker'] == ticker ]
+
+                df_select_tag_ticker.set_index(pd.DatetimeIndex(df_select_tag_ticker.srcDate), inplace=True)
+                df_select_tag_ticker = df_select_tag_ticker.resample('D').pad()
+                df_select_tag_ticker.srcDate = df_select_tag_ticker.index.values
+                df_select_tag_ticker.reset_index(drop=True, inplace=True)
+
+                list_df.append( df_select_tag_ticker )
+
+        df_tag_histo = pd.concat(list_df)
+        df_tag_histo.reset_index(drop=True, inplace=True)
+
+
+
+        df_tag_histo = df_tag_histo.sort_values(['srcDate', 'tag_priority'], ascending=True)
+        df = df_tag_histo.drop_duplicates(subset=['srcDate', 'ticker'], keep='first')
+
+        df['srcDate'] = df['srcDate'].dt.strftime("%Y-%m-%d")
+
+    else:
+        df = pd.DataFrame([])
+
+    #patch missing values
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
+
+
 @app.route('/tableau/data/tag', methods=['GET'])
 def tableau_data_tag():
 
     if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}' ):
-        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient="records" )
+        df_tag_histo = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient="records" )
+
+        # start of the fund
+        df_tag_histo = df_tag_histo[ df_tag_histo['srcDate'] >= '2018-05-01' ]
+
+        df_tag_histo['tag'] = df_tag_histo['tag'].apply(get_tag_processing)
+
+        list_df = [df_tag_histo]
+        df = pd.concat(list_df)
+        df.reset_index(drop=True, inplace=True)
     else:
         df = pd.DataFrame([])
 
@@ -1461,8 +1594,27 @@ def tableau_data_tag_last():
         df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_TAG_HISTO}', orient="records" )
 
         df = df[ df['srcDate'] == df['srcDate'].max() ]
+
+        df['tag'] = df['tag'].apply(get_tag_processing)
     else:
         df = pd.DataFrame([])
+
+    # merge with book
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_BOOK_EXPOSURE}' ):
+        df_book = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_BOOK_EXPOSURE}', orient="records" )
+    else:
+        df_book = pd.DataFrame([])
+    df_book = df_book[ ['internal_underlyingTicker', 'snapshot_datetime', 'position_tag'] ]
+    df_book['snapshot_datetime'] = df_book['snapshot_datetime'].str[:10]
+    df_book['source'] = 'book'
+    df_book = df_book.rename(columns={
+                                      'internal_underlyingTicker': 'ticker',
+                                      'position_tag': 'tag',
+                                      'snapshot_datetime': 'srcDate'
+                                      })
+
+    df = pd.concat( [df, df_book] )
+
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
