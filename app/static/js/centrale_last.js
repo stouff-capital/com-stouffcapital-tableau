@@ -1506,6 +1506,10 @@
     alias: 'snapshot_datetime',
     dataType: tableau.dataTypeEnum.datetime
   }, {
+    id: 'snapshot_date',
+    alias: 'snapshot_date',
+    dataType: tableau.dataTypeEnum.date
+  }, {
     id: 'ib_conid',
     alias: 'ib_conid',
     dataType: tableau.dataTypeEnum.int
@@ -1577,7 +1581,13 @@
     id: 'position_dailyPnlBase',
     alias: 'position_dailyPnlBase',
     dataType: tableau.dataTypeEnum.float
-  }*/];
+  }*/, {
+    id: 'position_tag',
+    alias: 'position_tag',
+    dataType: tableau.dataTypeEnum.string
+  }];
+
+
 
 
   var bookvsports_dm = [{
@@ -1642,7 +1652,15 @@
     id: 'tag',
     alias: 'tag',
     dataType: tableau.dataTypeEnum.string
-  }];
+  }, /*{
+    id: 'original_tag',
+    alias: 'original_tag',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: 'tag_priority',
+    alias: 'tag_priority',
+    dataType: tableau.dataTypeEnum.int
+  }*/];
 
 
 
@@ -1727,8 +1745,24 @@
         alias: 'BBG Portfolio',
         columns: bbgPort_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }, {
+        id: 'bbgPortHisto',
+        alias: 'BBG Portfolio Histo',
+        columns: bbgPort_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bbgPortLast',
+        alias: 'BBG Portfolio Last',
+        columns: bbgPort_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
         id: 'bookExposure',
         alias: 'Book Exposure',
+        columns: bookExposure_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bookExposureHisto',
+        alias: 'Book Exposure Histo',
+        columns: bookExposure_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
+      }, {
+        id: 'bookExposureLast',
+        alias: 'Book Exposure Last',
         columns: bookExposure_dm.map( function(field) { return {id: field.id, alias: field.alias, dataType: field.dataType } } )
       }, {
         id: 'bookVsPorts',
@@ -2060,9 +2094,73 @@
         doneCallback();
 
       });
+    } else if (table.tableInfo.id == "bbgPortHisto") {
+
+      $.getJSON('/tableau/data/scport/histo', function(data) {
+
+        tableData = data.map( function(port_position) {
+          var port_position_data = {};
+          for (var field in bbgPort_dm) { // loop on indexes
+            port_position_data[ bbgPort_dm[field].id ] = bbgPort_dm[field].hasOwnProperty('src') ? port_position[ bbgPort_dm[field].src ] : port_position[ bbgPort_dm[field].id.replace(/__/g, '.') ];
+          }
+          return port_position_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bbgPortLast") {
+
+      $.getJSON('/tableau/data/scport/last', function(data) {
+
+        tableData = data.map( function(port_position) {
+          var port_position_data = {};
+          for (var field in bbgPort_dm) { // loop on indexes
+            port_position_data[ bbgPort_dm[field].id ] = bbgPort_dm[field].hasOwnProperty('src') ? port_position[ bbgPort_dm[field].src ] : port_position[ bbgPort_dm[field].id.replace(/__/g, '.') ];
+          }
+          return port_position_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
     } else if (table.tableInfo.id == "bookExposure") {
 
       $.getJSON('/tableau/data/bookexposure', function(data) {
+
+        tableData = data.map( function(book_position) {
+          var book_position_data = {};
+          for (var field in bookExposure_dm) { // loop on indexes
+            book_position_data[ bookExposure_dm[field].id ] = bookExposure_dm[field].hasOwnProperty('src') ? book_position[ bookExposure_dm[field].src ] : book_position[ bookExposure_dm[field].id.replace(/__/g, '.') ];
+          }
+          return book_position_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bookExposureHisto") {
+
+      $.getJSON('/tableau/data/bookexposure/histo', function(data) {
+
+        tableData = data.map( function(book_position) {
+          var book_position_data = {};
+          for (var field in bookExposure_dm) { // loop on indexes
+            book_position_data[ bookExposure_dm[field].id ] = bookExposure_dm[field].hasOwnProperty('src') ? book_position[ bookExposure_dm[field].src ] : book_position[ bookExposure_dm[field].id.replace(/__/g, '.') ];
+          }
+          return book_position_data;
+        } )
+
+        table.appendRows(tableData);
+        doneCallback();
+
+      });
+    } else if (table.tableInfo.id == "bookExposureLast") {
+
+      $.getJSON('/tableau/data/bookexposure/last', function(data) {
 
         tableData = data.map( function(book_position) {
           var book_position_data = {};
