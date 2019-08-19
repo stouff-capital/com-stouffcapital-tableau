@@ -1602,7 +1602,7 @@ def tableau_data_matrix_flat():
                 rank = ddd[ddd['criteria']=='sectorRankingRank'].reset_index()['value'][0]
                 bk_wei = ddd[ddd['criteria']=='WeightInBenchmark'].reset_index()['value'][0]
 
-                ss = {'region':region,'sector':sector,'matrix_reco':weight,'rank':rank,'bk_wei':bk_wei}
+                ss = {'region':region,'sector':sector,'matrix_reco':weight,'rank':rank,'bk_wei':bk_wei,'data_date': dfm['data_date'].values[0]}
                 ds = pd.DataFrame(ss)
                 sectors_th = sectors_th.append(ds, ignore_index=True)
 
@@ -1679,7 +1679,7 @@ def get_tag_processing(tag):
         region = 'EU'
     elif 'ASIA' in tag:
         region = "EMERGING"
-    elif 'JP' in tag:
+    elif 'JP' in tag or 'JAPAN' in tag:
         region = 'JAPAN'
     else:
         #region = "OTHER"
@@ -1890,7 +1890,7 @@ def tableau_data_tag_last():
 
     #patch missing values
     df = df.where((pd.notnull(df)), None)
-    
+
     return jsonify( df.to_dict(orient='records') )
 
 

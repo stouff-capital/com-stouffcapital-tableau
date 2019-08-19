@@ -19,9 +19,11 @@ metadata:
   namespace: tableau
   labels:
     app: com-stouffcapital-tableau
+  annotations:
+        backup.velero.io/backup-volumes: tableau-persistent-storage
 spec:
   strategy:
-    type: RollingUpdate
+    type: Recreate
   template:
     metadata:
       labels:

@@ -1633,6 +1633,10 @@
     id: 'bk_wei',
     alias: 'bk_wei',
     dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'data_date',
+    alias: 'data_date',
+    dataType: tableau.dataTypeEnum.date
   }];
 
 
@@ -1652,7 +1656,7 @@
     id: 'tag',
     alias: 'tag',
     dataType: tableau.dataTypeEnum.string
-  }, /*{
+  }, {
     id: 'original_tag',
     alias: 'original_tag',
     dataType: tableau.dataTypeEnum.string
@@ -1660,7 +1664,7 @@
     id: 'tag_priority',
     alias: 'tag_priority',
     dataType: tableau.dataTypeEnum.int
-  }*/];
+  }];
 
 
 
