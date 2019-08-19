@@ -315,7 +315,8 @@ def prepare_dataset():
 
 
 @app.route('/tableau/data/centrale')
-def tableau_data_centrale():
+@app.route('/tableau/data/centrale/last')
+def tableau_data_centrale_last():
     #df = pd.read_csv( f'{UPLOAD_FOLDER}{FILENAME_TABLEAU}', sep=";" )
     df = prepare_dataset()
 
@@ -324,6 +325,29 @@ def tableau_data_centrale():
 
     return jsonify( df.to_dict(orient='records') )
     return jsonify( df[0:5].to_dict(orient='records') )
+
+
+@app.route('/tableau/data/centrale/last/light')
+def tableau_data_centrale_last_light():
+    df = prepare_dataset()
+
+    cols = df.columns
+
+    cols_to_remove = ['_index', '_type', '_id',
+                      'raw.sources.bbg.data.CRNCY', 'derived.data.priceFundamentalStartYear.value', 'derived.data.capiLocalCrncy.localValueInBln',
+                      'asset.COUNTRY', 'asset.COUNTRY_ISO.ISOALPHA3Code', 'asset.COUNTRY_ISO.name', 'asset.region.Level1', 'asset.region.Level2', 'raw.sources.bbg.data.REL_INDEX',
+                      'raw.sources.bbg.data.VOLATILITY_30D', 'raw.sources.bbg.data.VOLATILITY_180D',
+                      'raw.sources.bbg.data.BEST_4W_CHG_CUR_YR', 'raw.sources.bbg.data.BEST_4W_CHG_NXT_YR', 'raw.sources.bbg.data.BEST_EST_LONG_TERM_GROWTH', 'raw.sources.bbg.data.IS_COMP_EPS_EXCL_STOCK_COMP', 'raw.sources.bbg.data.IS_DIL_EPS_CONT_OPS', 'raw.sources.bbg.data.EEPS_CURR_YR', 'raw.sources.bbg.data.EEPS_NXT_YR', 'raw.sources.bbg.data.BEST_AEPS_LST_QTR', 'raw.sources.bbg.data.BEST_EEPS_LAST_QTR', 'raw.sources.bbg.data.EPS_SURPRISE_LAST_QTR', 'raw.sources.bbg.data.BEST_AEPS_LST_YR', 'raw.sources.bbg.data.BEST_EEPS_LAST_YR', 'raw.sources.bbg.data.EPS_SURPRISE_LAST_ANNUAL', 'raw.sources.bbg.data.EPS_BEF_XO_3YR_GEO_GROWTH', 'raw.sources.bbg.data.5Y_GEO_GROWTH_DILUTED_EPS', 'raw.sources.bbg.data.R_SQUARED_DIL_EPS_CONT_OPS', 'raw.sources.bbg.data.R_SQUARED_BAS_EPS_BEF_XO', 'raw.sources.bbg.data.BEST_EPS_3MO_PCT_CHG', 'raw.sources.bbg.data.BEST_EPS_6MO_PCT_CHG', 'raw.sources.bbg.data.PX_TO_CASH_FLOW', 'raw.sources.bbg.data.BEST_PE_RATIO', 'raw.sources.bbg.data.BEST_PX_SALES_RATIO', 'raw.sources.bbg.data.FIVE_YEAR_AVG_PRICE_SALES', 'raw.sources.bbg.data.EV_TO_T12M_SALES', 'raw.sources.bbg.data.BEST_PX_CPS_RATIO', 'raw.sources.bbg.data.FIVE_YEAR_AVG_PRICE_CASHFLOW', 'raw.sources.bbg.data.BEST_CURRENT_EV_BEST_SALES', 'raw.sources.bbg.data.BEST_CUR_EV_TO_EBITDA', 'raw.sources.bbg.data.PE_RATIO', 'raw.sources.bbg.data.FIVE_YR_AVG_PRICE_EARNINGS', 'raw.sources.bbg.data.BEST_DIV_YLD',
+                       'models.GROWTH.components.CURRENT_EPSMthChg.eval', 'models.GROWTH.components.CURRENT_EPSMthChg.toRank', 'models.GROWTH.components.PAST_EPSStability.eval', 'models.GROWTH.components.PAST_EPSStability.toRank', 'models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.eval', 'models.GROWTH.components.CURRENT_BEstEPS4WeekChangeNextYear.toRank', 'models.GROWTH.components.PAST_EPSGrowthYr.eval', 'models.GROWTH.components.PAST_EPSGrowthYr.toRank', 'models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.eval', 'models.GROWTH.components.CURRENT_BEstEPS4WeekChangeCurrentYear.toRank', 'models.GROWTH.components.NEXT_EPSGrowth.eval', 'models.GROWTH.components.NEXT_EPSGrowth.toRank', 'models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.eval', 'models.GROWTH.components.CURRENT_RatioEPSCurrentYearLastEPS.toRank', 'models.GROWTH.components.CURRENT_EPSSurprise.eval', 'models.GROWTH.components.CURRENT_EPSSurprise.toRank', 'models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.eval', 'models.GROWTH.components.CURRENT_RatioEPSNextYrCurrentYr.toRank',
+                       'models.RV.components.PX_TO_CASH_FLOW.eval', 'models.RV.components.PX_TO_CASH_FLOW.toRank', 'models.RV.components.BEST_PE_RATIO.eval', 'models.RV.components.BEST_PE_RATIO.toRank', 'models.RV.components.BEST_PX_SALES_RATIO/FIVE_YEAR_AVG_PRICE_SALES.eval', 'models.RV.components.BEST_PX_SALES_RATIO/FIVE_YEAR_AVG_PRICE_SALES.toRank', 'models.RV.components.EV_TO_T12M_SALES.eval', 'models.RV.components.EV_TO_T12M_SALES.toRank', 'models.RV.components.BEST_PX_CPS_RATIO/FIVE_YEAR_AVG_PRICE_CASHFLOW.eval', 'models.RV.components.BEST_PX_CPS_RATIO/FIVE_YEAR_AVG_PRICE_CASHFLOW.toRank', 'models.RV.components.BEST_CURRENT_EV_BEST_SALES.eval', 'models.RV.components.BEST_CURRENT_EV_BEST_SALES.toRank', 'models.RV.components.BEST_CUR_EV_TO_EBITDA.eval', 'models.RV.components.BEST_CUR_EV_TO_EBITDA.toRank', 'models.RV.components.PE_RATIO.eval', 'models.RV.components.PE_RATIO.toRank', 'models.RV.components.BEST_PE_RATIO/FIVE_YR_AVG_PRICE_EARNINGS.eval', 'models.RV.components.BEST_PE_RATIO/FIVE_YR_AVG_PRICE_EARNINGS.toRank', 'models.RV.components.BEST_DIV_YLD.eval', 'models.RV.components.BEST_DIV_YLD.toRank', 'models.RV.components.PX_TO_CASH_FLOW/FIVE_YEAR_AVG_PRICE_CASHFLOW.eval', 'models.RV.components.PX_TO_CASH_FLOW/FIVE_YEAR_AVG_PRICE_CASHFLOW.toRank',
+                       'models.MF.scoring.chg.1m', 'models.RSST.scoring.chg.1m', 'models.LOWVOL.scoring.chg.1m', 'models.RV.scoring.chg.1m', 'models.EQ.scoring.chg.1m', 'models.SALES.scoring.chg.1m', 'models.SMARTSENT.scoring.chg.1m',
+                       'raw.sources.bbg.data.HIST_PUT_IMP_VOL', 'raw.sources.bbg.data.BEST_TARGET_3MO_CHG', 'raw.sources.bbg.data.LATEST_ANN_DT_QTRLY', 'raw.sources.bbg.data.EXPECTED_REPORT_DT', 'raw.sources.bbg.data.EXPECTED_REPORT_TIME', 'raw.sources.bbg.data.SKEW_MONEYNESS_SPREAD', 'raw.sources.bbg.data.EARNINGS_RELATED_IMPLIED_MOVE', 'raw.sources.bbg.data.PUT_CALL_OPEN_INTEREST_RATIO', 'raw.sources.bbg.data.1M_SHORT_INT_PCT', 'raw.sources.bbg.data.PX_LAST', 'raw.sources.bbg.data.CHG_PCT_5D', 'raw.sources.bbg.data.CHG_PCT_30D', 'raw.sources.bbg.data.CHG_PCT_100D', 'raw.sources.bbg.data.CHG_PCT_YTD', 'raw.sources.bbg.data.RSI_14D', 'raw.sources.bbg.data.MOV_AVG_20D' 'raw.sources.bbg.data.MOV_AVG_50D', 'raw.sources.bbg.data.MOV_AVG_200D', 'raw.sources.bbg.data.HIGH_52WEEK', 'raw.sources.bbg.data.LOW_52WEEK', 'raw.sources.bbg.data.NET_DEBT_TO_EBITDA', 'raw.sources.bbg.data.REL_5D', 'reactiveData_date', 'models.rMF.scoring.final_score', 'models.rLOWVOL.scoring.final_score', 'models.rRSST.scoring.final_score', 'models.rEPS.scoring.chg.previous', 'models.rMF.scoring.chg.previous', 'models.rLOWVOL.scoring.chg.previous', 'models.rRSST.scoring.chg.previous', 'raw.sources.bbg.data.BEST_PE_RATIO@CY+4' ]
+
+    #patch missing values
+    df = df[ [col for col in cols if col not in cols_to_remove] ]
+    df = df.where((pd.notnull(df)), None)
+
+    return jsonify( df.to_dict(orient='records') )
 
 
 @app.route('/tableau/data/centrale/histo/upload', methods=['POST'])
