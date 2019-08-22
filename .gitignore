@@ -110,3 +110,4 @@ app/static/data/*
 kubernetes/com-stouffcapital-tableau-secret.yaml
 
 /*.csv
+.vscode

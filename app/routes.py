@@ -1459,6 +1459,202 @@ def tableau_data_bookexposure_upload():
     } )
 
 
+
+@app.route('/tableau/data/bookexposure/diff', methods=['POST'])
+@basic_auth.required
+def tableau_data_bookexposure_diff():
+
+    if os.path.isfile( f'{UPLOAD_FOLDER}{FILENAME_BOOK_EXPOSURE_HISTO}' ):
+        df = pd.read_json( f'{UPLOAD_FOLDER}{FILENAME_BOOK_EXPOSURE_HISTO}', orient="records" )
+
+        matrix_parameters =  request.get_json()['parameters']
+        print(matrix_parameters)
+        new = pd.DataFrame( request.get_json()['data'] )
+        combis = new.groupby(['snapshot_datetime']).size().reset_index().to_dict(orient='records')
+
+        for combi in combis:
+            mask  = df[ df['snapshot_datetime'] == combi['snapshot_datetime'] ]
+            df = df.drop( mask.index )
+
+        df = pd.concat( [df, new], sort=False )
+
+    else:
+        df = pd.DataFrame( request.get_json()['data'] )
+
+
+
+    # processing
+    df['position_dailyPnlLocal'] = ((df['asset_price']-df['asset_priceClose'])*df['position_qtyCurrent']*df['asset_multiplier']+df['position_ntcfIntradayLocal']+(df['position_qtyCurrent']-df['position_qtyClose'])*df['asset_priceClose']*df['asset_multiplier'])
+    df['position_dailyPnlBase'] = df['position_dailyPnlLocal'] * df['position_fxRate']
+
+    df.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_BOOK_EXPOSURE_HISTO}', orient='records' )
+
+
+    # compute content for sc vs port - JG notebook
+    df_port = df [ df['snapshot_datetime'] == max( df['snapshot_datetime'] ) ]  # book
+    #df_port = pd.read_json( tableau_data_bookexposure_last() )
+
+    df_sc = pd.read_json( tableau_data_scport_last().get_data() ) # bbg port
+
+    df_stat = pd.read_json( tableau_data_centrale_last().get_data() )
+
+    df_sc = pd.merge(df_sc, df_stat, how = 'left', left_on = 'position_ticker', right_on = 'ticker.given')
+
+    df_port = pd.merge(df_port, df_stat, how = 'left', left_on = 'internal_underlyingTicker', right_on = 'ticker.given')
+
+    df_port.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')
+
+    wUS_L = matrix_parameters['wUS_L']
+    wEU_L = matrix_parameters['wEU_L']
+    wAS_L = matrix_parameters['wAS_L']
+    wJ_L = matrix_parameters['wJ_L']
+    wUS_S = -1*wUS_L/3
+    wEU_S = -1*wEU_L/3
+
+
+    #general conditions
+    long = df_port['position_underlying_NavPct'] >= 0
+    short = df_port['position_underlying_NavPct'] < 0
+    eq = df_port['asset.GICS_SECTOR_NAME']!='INDEX'
+
+    #  --- europe
+
+    # book EU long
+    reg = df_port['asset.region.MatrixRegion'] == 'Europe'
+    df_port_euL = df_port[reg & long & eq] 
+    df_port_euL['BOOK'] = 'BOOK EU LONG'
+
+    # SC EU long
+    s_eu = (df_sc['portfolio_name'] == 'SC SXXP LONG')|(df_sc['portfolio_name'] == 'SC VOLEPS EU')
+
+    df_sc_euL = df_sc[s_eu]
+    if df_sc_euL.position_ticker.nunique()*wEU_L!=0:
+        df_sc_euL['SCweight'] = 1/df_sc_euL.position_ticker.nunique()*wEU_L
+    else:
+         df_sc_euL['SCweight'] = 0
+
+    df_eu_long = pd.merge(df_sc_euL, df_port_euL, how = 'outer', left_on = 'position_ticker', right_on = 'internal_underlyingTicker')
+
+    # book EU short
+    reg = df_port['asset.region.MatrixRegion'] == 'Europe'
+    df_port_euS = df_port[reg & short & eq] 
+    df_port_euS['BOOK'] = 'BOOK EU SHORT'
+    tot_weiS = df_port_euS.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
+
+    # SC EU short
+    s_euS = df_sc['portfolio_name'] == 'SC SXXP SHORT'
+    df_sc_euS = df_sc[s_euS]
+    if df_sc_euS.position_ticker.nunique()*wEU_S!=0:
+        df_sc_euS['SCweight'] = 1/df_sc_euS.position_ticker.nunique()*wEU_S
+    else:
+        df_sc_euS['SCweight'] = 0
+
+    df_eu_short = pd.merge(df_sc_euS, df_port_euS, how = 'outer', left_on = 'position_ticker', right_on = 'internal_underlyingTicker')
+
+
+    # --- usa
+
+    # book USA long
+    reg1 = df_port['asset.region.MatrixRegion'] == 'U.S.A.'
+    df_port_usL = df_port[reg1 & long & eq] 
+    df_port_usL['BOOK'] = 'BOOK USA LONG'
+    #tot_weiU = df_port_usL.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
+
+    # SC USA long
+    s_us = (df_sc['portfolio_name'] == 'SC SPX LONG')|(df_sc['portfolio_name'] == 'SC VOLEPS US')
+    df_sc_usL = df_sc[s_us]
+    if df_sc_usL.position_ticker.nunique()*wUS_L!=0:
+        df_sc_usL['SCweight'] = 1/df_sc_usL.position_ticker.nunique()*wUS_L
+    else:
+         df_sc_usL['SCweight'] = 0
+
+    df_us_long = pd.merge(df_sc_usL, df_port_usL, how = 'outer', left_on = 'position_ticker', right_on = 'internal_underlyingTicker')
+
+
+    # book USA short
+    df_port_usS = df_port[reg1 & short & eq] 
+    df_port_usS['BOOK'] = 'BOOK USA SHORT'
+    #tot_weiUs = df_port_usS.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
+
+    # SC USA short
+    s_usS = df_sc['portfolio_name'] == 'SC US SHORT'
+    df_sc_usS = df_sc[s_usS]
+    if df_sc_usS.position_ticker.nunique()*wUS_S!=0:
+        df_sc_usS['SCweight'] = 1/df_sc_usS.position_ticker.nunique()*wUS_S
+    else:
+        df_sc_usS['SCweight'] = 0
+
+    df_us_short = pd.merge(df_sc_usS, df_port_usS, how = 'outer', left_on = 'position_ticker', right_on = 'internal_underlyingTicker')
+
+
+    # --- emerging
+
+    # book Asia long
+    reg1 = df_port['asset.region.MatrixRegion'] == 'Emerging'
+    df_port_asL = df_port[reg1 & long & eq] 
+    df_port_asL['BOOK'] = 'BOOK ASIA LONG'
+    #tot_weiU = df_port_usL.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
+
+    # SC Asia long
+    s_a = df_sc['portfolio_name'] == 'SC ASIA LONG'
+    df_sc_asL = df_sc[s_a]
+    if df_sc_asL.position_ticker.nunique()*wAS_L!=0:
+        df_sc_asL['SCweight'] = 1/df_sc_asL.position_ticker.nunique()*wAS_L
+    else:
+        df_sc_asL['SCweight'] = 0
+
+    df_as_long = pd.merge(df_sc_asL, df_port_asL, how = 'outer', left_on = 'position_ticker', right_on = 'internal_underlyingTicker')
+
+
+    # --- japan
+    # book Japan long
+    reg1 = df_port['asset.region.MatrixRegion'] == 'Japan'
+    df_port_jpL = df_port[reg1 & long & eq] 
+    df_port_jpL['BOOK'] = 'BOOK JAPAN LONG'
+    #tot_weiU = df_port_usL.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
+
+    # SC Japan long
+    s_j = df_sc['portfolio_name'] == 'SC JAPAN LONG'
+    df_sc_jpL = df_sc[s_j]
+    if df_sc_jpL.position_ticker.nunique()*wJ_L!=0:
+        df_sc_jpL['SCweight'] = 1/df_sc_jpL.position_ticker.nunique()*wJ_L
+    else:
+        df_sc_jpL['SCweight'] = 0
+
+    df_jp_long = pd.merge(df_sc_jpL, df_port_jpL, how = 'outer', left_on = 'position_ticker', right_on = 'internal_underlyingTicker')
+
+    df_jp_long.head()
+
+    df_final = pd.concat([df_eu_long,df_eu_short,df_us_long,df_us_short,df_as_long,df_jp_long], ignore_index=True,sort = False)
+
+
+    for index, row in df_final.iterrows(): 
+        val = row['position_ticker']
+        if row['position_ticker'] != row['position_ticker']:
+            val = row['ticker.given_y']
+        df_final.at[index,'TICKER'] = val
+
+    df_fin = df_final[['TICKER','BOOK','portfolio_name','position_underlying_NavPct','SCweight', 'portfolio_date', 'snapshot_date']]
+
+
+    df_export = df_fin
+    df_export.rename(columns={'TICKER': 'ticker', 'BOOK': 'book_name', 'portfolio_name': 'sc_portfolio_name', 'position_underlying_NavPct': 'book_weight', 'SCweight': 'sc_weight'}, inplace=True)
+
+    df_export.to_csv( f'{UPLOAD_FOLDER}verif_book_vs_port.csv' )
+
+    df_export.to_json( path_or_buf=f'{UPLOAD_FOLDER}{FILENAME_BOOK_VS_PORTS}', orient='records' )
+
+
+
+
+    return jsonify( {
+        'status': 'ok',
+        'submittedDatetime': datetime.datetime.now().isoformat(),
+        'data': len(df),
+        'parameters': matrix_parameters
+    } )
+
+
 @app.route('/tableau/data/bookexposure', methods=['GET'])
 def tableau_data_bookexposure():
     #return redirect(url_for('tableau_data_bookexposure_histo_full'))

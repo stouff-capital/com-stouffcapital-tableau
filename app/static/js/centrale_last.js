@@ -1610,6 +1610,14 @@
     id: 'sc_weight',
     alias: 'sc_weight',
     dataType: tableau.dataTypeEnum.float
+  }, {
+    id: 'portfolio_date',
+    alias: 'portfolio_date',
+    dataType: tableau.dataTypeEnum.date
+  }, {
+    id: 'snapshot_date',
+    alias: 'snapshot_date',
+    dataType: tableau.dataTypeEnum.date
   }];
 
 
