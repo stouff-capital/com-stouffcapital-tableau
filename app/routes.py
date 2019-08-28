@@ -1478,6 +1478,8 @@ def tableau_data_bookexposure_diff():
 
         df = pd.concat( [df, new], sort=False )
 
+        df['internal_underlyingTicker'] = df['internal_underlyingTicker'].apply(patch_ticker_marketplace)
+
     else:
         df = pd.DataFrame( request.get_json()['data'] )
 
@@ -1492,6 +1494,12 @@ def tableau_data_bookexposure_diff():
 
     # compute content for sc vs port - JG notebook
     df_port = df [ df['snapshot_datetime'] == max( df['snapshot_datetime'] ) ]  # book
+
+    print('-- book: --')
+    with pd.option_context('display.max_rows', 1000):  # more options can be specified also
+        print(df_port[ ['bbg_ticker', 'internal_underlyingTicker', 'position_qtyCurrent', 'position_tag'] ])
+    print('---')
+
     #df_port = pd.read_json( tableau_data_bookexposure_last() )
 
     df_sc = pd.read_json( tableau_data_scport_last().get_data() ) # bbg port
@@ -1521,7 +1529,7 @@ def tableau_data_bookexposure_diff():
 
     # book EU long
     reg = df_port['asset.region.MatrixRegion'] == 'Europe'
-    df_port_euL = df_port[reg & long & eq] 
+    df_port_euL = df_port[reg & long & eq]
     df_port_euL['BOOK'] = 'BOOK EU LONG'
 
     # SC EU long
@@ -1537,7 +1545,7 @@ def tableau_data_bookexposure_diff():
 
     # book EU short
     reg = df_port['asset.region.MatrixRegion'] == 'Europe'
-    df_port_euS = df_port[reg & short & eq] 
+    df_port_euS = df_port[reg & short & eq]
     df_port_euS['BOOK'] = 'BOOK EU SHORT'
     tot_weiS = df_port_euS.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
 
@@ -1556,7 +1564,7 @@ def tableau_data_bookexposure_diff():
 
     # book USA long
     reg1 = df_port['asset.region.MatrixRegion'] == 'U.S.A.'
-    df_port_usL = df_port[reg1 & long & eq] 
+    df_port_usL = df_port[reg1 & long & eq]
     df_port_usL['BOOK'] = 'BOOK USA LONG'
     #tot_weiU = df_port_usL.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
 
@@ -1572,7 +1580,7 @@ def tableau_data_bookexposure_diff():
 
 
     # book USA short
-    df_port_usS = df_port[reg1 & short & eq] 
+    df_port_usS = df_port[reg1 & short & eq]
     df_port_usS['BOOK'] = 'BOOK USA SHORT'
     #tot_weiUs = df_port_usS.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
 
@@ -1591,7 +1599,7 @@ def tableau_data_bookexposure_diff():
 
     # book Asia long
     reg1 = df_port['asset.region.MatrixRegion'] == 'Emerging'
-    df_port_asL = df_port[reg1 & long & eq] 
+    df_port_asL = df_port[reg1 & long & eq]
     df_port_asL['BOOK'] = 'BOOK ASIA LONG'
     #tot_weiU = df_port_usL.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
 
@@ -1609,7 +1617,7 @@ def tableau_data_bookexposure_diff():
     # --- japan
     # book Japan long
     reg1 = df_port['asset.region.MatrixRegion'] == 'Japan'
-    df_port_jpL = df_port[reg1 & long & eq] 
+    df_port_jpL = df_port[reg1 & long & eq]
     df_port_jpL['BOOK'] = 'BOOK JAPAN LONG'
     #tot_weiU = df_port_usL.groupby(['asset.region.MatrixRegion'])['position_underlying_NavPct'].agg('sum')[0]
 
@@ -1628,7 +1636,7 @@ def tableau_data_bookexposure_diff():
     df_final = pd.concat([df_eu_long,df_eu_short,df_us_long,df_us_short,df_as_long,df_jp_long], ignore_index=True,sort = False)
 
 
-    for index, row in df_final.iterrows(): 
+    for index, row in df_final.iterrows():
         val = row['position_ticker']
         if row['position_ticker'] != row['position_ticker']:
             val = row['ticker.given_y']
