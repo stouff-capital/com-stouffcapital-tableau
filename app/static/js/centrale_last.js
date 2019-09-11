@@ -1534,6 +1534,14 @@
     alias: 'asset_currency',
     dataType: tableau.dataTypeEnum.string
   }, {
+    id: 'asset_gicsSector',
+    alias: 'asset_gicsSector',
+    dataType: tableau.dataTypeEnum.string
+  }, {
+    id: ' asset_gicsIndustry',
+    alias: ' asset_gicsIndustry',
+    dataType: tableau.dataTypeEnum.string
+  }, {
     id: 'internal_underlyingTicker',
     alias: 'internal_underlyingTicker',
     dataType: tableau.dataTypeEnum.string
