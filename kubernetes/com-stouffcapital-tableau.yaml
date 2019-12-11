@@ -68,7 +68,7 @@ spec:
               name: tableau
               key: github-client-secret
         - name: S3_HOST
-          value: http://s3-minio-service.storage.svc.cluster.stouffcapital.tech:9000
+          value: https://s3.stouffcapital.tech
         - name: S3_ACCESSKEY
           valueFrom:
             secretKeyRef:

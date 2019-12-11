@@ -153,7 +153,14 @@ def centrale_histo():
     return render_template("histo.html")
 
 def datamodel_tableau_hive():
-    return [{'field': 'ticker.given', 'hiveDatatype': 'STRING'}]
+    return [
+            {'field': 'ticker.given', 'hiveDatatype': 'STRING'}, {'field': 'data.datetime', 'hiveDatatype': 'DATE'}, {'field': 'ticker.ultimate_ticker', 'hiveDatatype': 'STRING'},
+            {'field': 'asset.NAME', 'hiveDatatype': 'STRING'}, {'field': 'asset.ID_ISIN', 'hiveDatatype': 'STRING'}, {'field': 'asset.CRNCY', 'hiveDatatype': 'STRING'}, {'field': 'raw.sources.bbg.data.CRNCY', 'hiveDatatype': 'STRING'}, {'field': 'raw.sources.bbg.data.EQY_FUND_CRNCY', 'hiveDatatype': 'STRING'},
+            {'field': 'derived.data.capiBaseCrncy.baseValueInBln', 'hiveDatatype': 'DOUBLE'},
+            {'field': 'asset.GICS_SECTOR_NAME', 'hiveDatatype': 'STRING'}, {'field': 'asset.GICS_INDUSTRY_GROUP_NAME', 'hiveDatatype': 'STRING'}, {'field': 'asset.GICS_INDUSTRY_NAME', 'hiveDatatype': 'STRING'}, {'field': 'asset.COUNTRY_ISO.ISOALPHA2Code', 'hiveDatatype': 'STRING'}, {'field': 'asset.region.MatrixRegion', 'hiveDatatype': 'STRING'},
+            {'field': 'raw.sources.bbg.data.VOLATILITY_90D', 'hiveDatatype': 'DOUBLE'}, {'field': 'raw.sources.bbg.data.CHG_PCT_1YR', 'hiveDatatype': 'DOUBLE'}, {'field': 'raw.sources.bbg.data.REL_1M', 'hiveDatatype': 'DOUBLE'}, {'field': 'raw.sources.bbg.data.REL_3M', 'hiveDatatype': 'DOUBLE'},
+            {'field': 'models.GROWTH.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.EPS.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.MF.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.RSST.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.LOWVOL.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.RV.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.EQ.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.SALES.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.SMARTSENT.scoring.final_score', 'hiveDatatype': 'TINYINT'}, {'field': 'models.GROWTH.scoring.chg.1m', 'hiveDatatype': 'TINYINT'}
+           ]
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -181,6 +188,8 @@ def upload():
             df['data.datetime'] = data_datetime
             df.to_csv(os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'), sep=",", index=False, columns=[ f['field'] for f in datamodel_tableau_hive() ])
 
+            if not minioClient.bucket_exists('tableau'):
+                minioClient.make_bucket('tableau')
             minioClient.fput_object('tableau', f'histo/tableau_{data_datetime}.csv', os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'))
             minioClient.fput_object('tableau', f'last/tableau.csv', os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'))
 
