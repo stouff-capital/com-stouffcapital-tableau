@@ -185,12 +185,13 @@ def upload():
 
             data_datetime = df['_index'].values[0].replace("central-", "")
 
-            df['data.datetime'] = data_datetime
-            df.to_csv(os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'), sep=",", index=False, columns=[ f['field'] for f in datamodel_tableau_hive() ])
+            df['data.datetime'] = data_datetime.replace(".", "-")
+            # avoid comma because of GICS_INDUSTRY_GROUP_NAME
+            df.to_csv(os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'), sep=";", index=False, columns=[ f['field'] for f in datamodel_tableau_hive() ])
 
             if not minioClient.bucket_exists('tableau'):
                 minioClient.make_bucket('tableau')
-            minioClient.fput_object('tableau', f'histo/tableau_{data_datetime}.csv', os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'))
+            minioClient.fput_object('tableau', f'histo/tableau_{data_datetime.replace(".", "-")}.csv', os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'))
             minioClient.fput_object('tableau', f'last/tableau.csv', os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'))
 
 
