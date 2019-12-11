@@ -59,7 +59,8 @@ blueprint = make_github_blueprint(
 )
 app.register_blueprint(blueprint, url_prefix="/login")
 
-
+from minio import Minio
+from minio.error import ResponseError
 minioClient = Minio(
     os.getenv("S3_HOST").replace('https://', '').replace('http://', ''),
     access_key=os.getenv("S3_ACCESSKEY"),

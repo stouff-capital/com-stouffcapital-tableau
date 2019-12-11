@@ -3,7 +3,7 @@ LABEL maintainer="gregory.chevalley+docker@gmail.com"
 
 COPY . /app
 WORKDIR /app
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 RUN chmod a+x boot.sh
 ENV FLASK_APP com-stouffcapital-tableau.py
