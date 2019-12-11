@@ -3,6 +3,7 @@ Flask-Dance
 Flask-BasicAuth
 Flask-SQLAlchemy
 gunicorn
+minio
 numpy
 pandas
 psycopg2-binary

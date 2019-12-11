@@ -60,6 +60,13 @@ blueprint = make_github_blueprint(
 app.register_blueprint(blueprint, url_prefix="/login")
 
 
+minioClient = Minio(
+    os.getenv("S3_HOST").replace('https://', '').replace('http://', ''),
+    access_key=os.getenv("S3_ACCESSKEY"),
+    secret_key=os.getenv("S3_SECRETKEY"),
+    secure=os.getenv("S3_HOST")[:5].upper() == 'https'.upper()
+)
+
 
 # utilities
 def allowed_file(filename):
@@ -144,6 +151,8 @@ def xls_positions():
 def centrale_histo():
     return render_template("histo.html")
 
+def datamodel_tableau_hive():
+    return [{'field': 'ticker.given', 'hiveDatatype': 'STRING'}]
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -165,10 +174,19 @@ def upload():
             app.logger.info(f'save as: {FILENAME_TABLEAU}' )
 
             df = pd.read_csv( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU), sep=";")
+
+            data_datetime = df['_index'].values[0].replace("central-", "")
+
+            df['data.datetime'] = data_datetime
+            df.to_csv(os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'), sep=",", index=False, columns=[ f['field'] for f in datamodel_tableau_hive() ])
+
+            minioClient.fput_object('tableau', f'histo/tableau_{data_datetime}.csv', os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'))
+            minioClient.fput_object('tableau', f'last/tableau.csv', os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'))
+
+
             app.logger.info(f'len file: {len(df)}')
 
             try:
-                data_datetime = df['_index'].values[0].replace("central-", "")
                 tableau_zip = zipfile.ZipFile( os.path.join(UPLOAD_FOLDER, f'tableau-{data_datetime}.zip'), 'w')
                 tableau_zip.write( os.path.join(UPLOAD_FOLDER, FILENAME_TABLEAU), compress_type=zipfile.ZIP_DEFLATED)
                 tableau_zip.close()
