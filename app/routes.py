@@ -187,7 +187,7 @@ def upload():
 
             df['data.datetime'] = data_datetime.replace(".", "-")
             # avoid comma because of GICS_INDUSTRY_GROUP_NAME
-            df.to_csv(os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'), sep=";", index=False, columns=[ f['field'] for f in datamodel_tableau_hive() ])
+            df.to_csv(os.path.join(UPLOAD_FOLDER, 'tableau_s3.csv'), sep=";", index=False, header=False, columns=[ f['field'] for f in datamodel_tableau_hive() ])
 
             if not minioClient.bucket_exists('tableau'):
                 minioClient.make_bucket('tableau')
